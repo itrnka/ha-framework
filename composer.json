@@ -1,0 +1,31 @@
+{
+    "name": "itrnka/ha-framework",
+    "description": "PHP 7.1 framework for professionals with high abstraction. This is framework core.",
+    "type": "library",
+    "keywords": [
+        "ha",
+        "php",
+        "php7",
+        "php7.1",
+        "framework"
+    ],
+    "homepage": "https://github.com/itrnka/ha-framework",
+    "time": "2017-11-15",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "itrnka",
+            "email": "tic@tic.sk",
+            "role": "Developer"
+        }
+    ],
+    "support": {},
+    "require": {
+        "php": "^7.1"
+    },
+    "autoload": {
+        "psr-4" : {
+            "ha\\": "src/ha"
+        }
+    },
+}
