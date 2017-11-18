@@ -157,9 +157,9 @@ class ArticleModuleFactory
     public function createArticle(string $articleType): Article
     {
         switch ($articleType) {
-            case Article::TYPE_BLOG_ARTCILE:
+            case Article::ARTCILE_TYPE_BLOG:
                 return new BlogArticle();
-            case Article::TYPE_PRODUCT_ARTCILE:
+            case Article::ARTCILE_TYPE_PRODUCT:
                 return new ProductArticle();
             default:
                 throw new \Error("Invalid article type");
@@ -189,10 +189,10 @@ class ArticleModule extends ModuleDefaultAbstract
 }
 
 // example call in external code:
-$article = main()->module->article->factory()->createArticle(Article::TYPE_BLOG_ARTCILE);
+$article = main()->module->article->factory()->createArticle(Article::ARTCILE_TYPE_BLOG);
 ```
 
-Now we can add facade method(s) for accessing some service(s).
+Now we can add facade method(s) for accessing to some service(s).
 
 ```php
 class ArticleModule extends ModuleDefaultAbstract
