@@ -64,14 +64,15 @@ main()->middleware->myMiddleware = new MyMiddleware();
 
 ## Middleware configuration
 
-Middleware configuration is stored in config file in `$cfg['middleware']` array. Every item is array, which has two items: *(string) className* and *(array) configuration*. Key `name` must be unique in configruartion, this defines unique name of instance in middleware IoC container. Framework automatically creates instances from this configuration and adds theirs to IoC middleware container in app bootstrap.
+Middleware configuration is stored in config file in `$cfg['middleware']` array. Every item is array, which has two items: *(string) className* and *(array) configuration*. Key `name` must be unique in configruartion, this defines unique name of instance in middleware IoC container. Framework automatically creates instances from this configuration and adds theirs to IoC middleware container in app bootstrap. 
+So `name` key is always required in configuration, other keys are specific by middleware (in our example `host`, `user`, `password`, ...) and they defines real configuration data.
 
 ```php
 // schema:
 $cfg['middleware'] = [
     [className1::class, ['name' => 'uniqueName1', ...]],
-    [className2::class, ['name' => 'uniqueName1', ...]],
-    [className3::class, ['name' => 'uniqueName1', ...]],
+    [className2::class, ['name' => 'uniqueName2', ...]],
+    [className3::class, ['name' => 'uniqueName3', ...]],
 ];
 
 // example:
@@ -80,13 +81,13 @@ $cfg['middleware'] = [
     [
         \ha\Middleware\RDBMS\MySQLi\MySQLi::class,
         [
-            'name' => 'SQL001',
-            'host' => '127.0.0.1', 
-            'user' => 'root',
-            'password' => 'password',
-            'database' => 'products_db',
-            'port' => null,
-            'socket' => null,
+            'name' => 'SQL001', // required for app
+            'host' => '127.0.0.1', // required for middleware
+            'user' => 'root', // required for middleware
+            'password' => 'password', // required for middleware
+            'database' => 'products_db', // required for middleware
+            'port' => null, // required for middleware
+            'socket' => null, // required for middleware
         ]
     ],
     // MySQLi (connection to local database 'clients_db')
