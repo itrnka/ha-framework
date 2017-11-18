@@ -81,7 +81,7 @@ $cfg['middleware'] = [
     [
         \ha\Middleware\RDBMS\MySQLi\MySQLi::class,
         [
-            'name' => 'SQL001', // required for app
+            'name' => 'SQL001', // required for app (key in IoC container)
             'host' => '127.0.0.1', // required for middleware
             'user' => 'root', // required for middleware
             'password' => 'password', // required for middleware
