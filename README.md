@@ -24,9 +24,14 @@ PHP 7.1 framework for professionals with high abstraction. This is framework cor
 - this is not wrong symphony wrapper such as laravel
 
 ### Framework functionality
-Functionality documentation is divided to these areas:
 
-- [HTTP access](docs/http-routing.md): recieve and convert HTTP requests to HTTP responses (router, routes, controllers, request, response)
-- [Modules](docs/moduless.md): application logic (application services, IO services, models)
-- [Middleware](docs/middleware.md): glue to external functionality (drivers, packages, etc.)
-- [Shell access](docs/shell.md): executing scripts from command line
+Functionality is divided to these areas:
+
+- Logic components:
+  - [Middleware](docs/middleware.md): glue to external functionality (drivers, packages, etc.)
+  - [Modules](docs/modules.md): application logic (application services, IO services, models)
+- Access to application:
+  - [HTTP access](docs/http-routing.md): recieve and convert HTTP requests to HTTP responses (router, routes, controllers, request, response, rendering)
+  - [Shell access](docs/shell.md): executing scripts from command line
+ 
+ 
