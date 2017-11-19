@@ -32,7 +32,7 @@ Configuration file must begining with variable definition:
 $cfg = []; // do not remove this line, $cfg variable is very important and required for bootstrap
 ```
 
-#### Part 1 - Application core
+#### Part 1 - Application core	
 
 App is created in bootstrap via app builder and builder class name must be defined in configuration. This builder must implements interface `ha\App\App\AppBuilder`. We can use default implementation `ha\App\App\AppBuilderDefault` (suitable for most cases, but in special cases we can use different implementation). App builder is object, which returns builded application instance.
 
@@ -237,4 +237,4 @@ $cfg['my.server.timezone'] = function(): DateTimeZone {
 
 #### Best practices for configuration files
 
-We can have shared configuration file (e.g. `{projectRoot}/conf/_shared.php`) and this file is included to concrete configurations. Concrete configuration then only appends some specific data. We extendig our base configuration in this case with specific configuration data.
+We can have shared configuration file (e.g. `{projectRoot}/conf/_shared.php`) and this file will be included into concrete configuration. Concrete configuration then only appends some specific data. We extendig our base configuration in this case with specific configuration data.
