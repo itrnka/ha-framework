@@ -1,5 +1,5 @@
 # ha framework
-PHP 7.1 framework for professionals with high abstraction. This is framework core.
+PHP 7.1 framework for professionals with high abstraction. 
 
 ### Framework highlights
 - based on PHP 7.1
@@ -25,7 +25,7 @@ PHP 7.1 framework for professionals with high abstraction. This is framework cor
 
 ### Framework functionality
 
-Functionality is divided to these areas:
+Framework core is very simple and very effective glue between some application parts. Functionality ot this parts is divided to these areas:
 
 - Logic components:
   - [Middleware](docs/middleware.md): glue to external functionality (drivers, packages, etc.)
