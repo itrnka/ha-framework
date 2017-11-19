@@ -17,7 +17,7 @@ Model in *ha* framework is extended from abstract `ha\Internal\DefaultClass\Mode
 - model can be converted to array via `$model->getAsArray()`
 - model can be converted to stdClass (raw php object) via `$model->getAsArray()`
 - we can fill model properties from array via `$model->fillFromArray()`
-- binding data to model via methods defined in model collection (see collections for details)
+- binding data to model via methods defined in models collection (see collections for details)
 - usefull configurable `__invoke()` method (we can use `$model()` method for many usefull cases with arguments)
 
 ORM based functionality for models is wrong way. ORM is very slow and is directly and inseparably depended on concrete datasource instance. Principe used for models in *ha* framework is datasource independent and is very flexible. So models are absolutely separated from datasources and can be used in future for other datasources without code changes. Also datasource can be removed from application without model changes. This is very important for code reusability. The same models can be used accross multiple projects.
@@ -192,7 +192,7 @@ class Edition extends ModelDefaultAbstract
 
 As we can see, model uses protected properties. In class anotation are defined this properties as `@property int $id`. This helps autocompleting property names in your IDE editor.
 
-Very important and required is constant `COLLECTION_CLASS`. This defines which class name is used, when we converting model to model collection and when is appended model to collection. Model and collection is so protected to other types (e.g. integer could not be added to collection and many developer errors are prevented with this principe). This is typehinting implementation.
+Very important and required is constant `COLLECTION_CLASS`. This defines which class name is used, when we converting model to models collection and when is appended model to collection. Model and collection is so protected to other types (e.g. integer could not be added to collection and many developer errors are prevented with this principe). This is typehinting implementation.
 
 Next step is defining our protected properties and access methods for this properties. Access methods must be in camelCase format. Dash_case format is not supported.
 
@@ -365,7 +365,7 @@ $modelData = [
 
 ### bindRelations() method - binding data to model by references
 
-Model collections have this functionality: Binding submodels to model by references. We can add binding methods to assocciated collection and then we can call this method `$model->bindRelations([ ... ])` on our model. This method converts model to associated model collection and then are called binding methods on this collection. So collection methods are accessible also for model.
+Models collections have this functionality: Binding submodels to model by references. We can add binding methods to assocciated collection and then we can call this method `$model->bindRelations([ ... ])` on our model. This method converts model to associated models collection and then are called binding methods on this collection. So collection methods are accessible also for model.
 
 Schema:
 
@@ -373,7 +373,7 @@ Schema:
     /**
      * Bind relations.
      *
-     * This creates new model collection in background, appends model to this collection and call "bindRelations"
+     * This creates new models collection in background, appends model to this collection and call "bindRelations"
      * method on this collection.
      *
      * @param string[] $list List of method names in collection

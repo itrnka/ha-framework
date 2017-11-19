@@ -2,6 +2,8 @@
 
 ## What is module in *ha* framework
 
+**We can very simply say: module uses application services to some functionality and application service uses IO services to read/write data. IO services uses middleware to concrete CRUD operations. Service input or service output is representeed as model, models collection or scalar value. Complex of these instances is module, when these instances are in the same logic family. Module makes public access to some these instances. So we can see clear difference between module and middleware. At a first look is it often not clear. So module is set of services and models with public access via facade pattern, but without middleware - midddleware is outside module.**
+
 Module is facade to complex functionality family. Module also encapsulate complete functionality for some complex logic. When we have e.g. articles in system, module can be *ArticleModule* and here would be all about reading and writing articles: models (*Article, Articles, ArticleCategory, ArticleCategories, ...*), application services with bussines logic (e.g. verify ACL or something other and call IO service in background), IO services (transform input params to query and call concrete middleware driver), so full flow about articles. Other module can be e.g. *LanguageModule* and this module will have all about languages (all services and all models).
 
 Module instances can be called from controllers (reading or writing data). When request is mapped via router to concrete route, route will calls controller method an in this method we can use module method to accessing service.
@@ -79,7 +81,7 @@ interface Module
 - [Model](models.md): represents a single record in some datasource
 - Model collection: array of models with extended functionality and type checking for children 
 - Factory: factory for creating models and model collections
-- Services: application logic, IO logic (read, insert, delete and update data)
+- [Services](services.md): application/bussines logic, IO logic (read, insert, delete and update data)
 
 ## Why are modules required?
 
@@ -250,12 +252,3 @@ $article = main()->module->article->invalidateCache(); // clear all data cached 
 ```
 
 As we can see, internal complex logic is invisible from outside. Implementation details are independent outside module.
-
-
-## Differences between module and middleware
-
-| Functionality | Module | Middleware |
-|--|--------|------------|
-| Bussines logic | yes | no |
-| Model(s) | yes | no |
-| IO operations (e.g. db write) | yes (concrete service uses concrete middleware) | yes (directly) |

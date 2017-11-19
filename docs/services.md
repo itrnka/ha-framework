@@ -1,0 +1,66 @@
+# Services
+
+Service in *ha* framework is extended from `ha\Internal\DefaultClass\Service\ModuleServiceDefaultAbstract` or service must implement interface `ha\Internal\DefaultClass\Service\ModuleService`. Service is instance, which provides some application/bussines logic or privdes IO operations (CRUD operations).
+
+Service interface is very simple:
+
+```php
+interface ModuleService
+{
+
+    /**
+     * ModuleService constructor.
+     *
+     * @param Module $module
+     */
+    public function __construct(Module $module);
+
+}
+```
+
+Service abstract is also very simple:
+
+```php
+
+abstract class ModuleServiceDefaultAbstract implements ModuleService
+{
+
+    /** @var Module  */
+    protected $module;
+
+    /**
+     * ModuleService constructor.
+     *
+     * @param Module $module
+     */
+    final public function __construct(Module $module)
+    {
+        $this->module = $module;
+        $this->bootstrap();
+    }
+
+    /**
+     * Constructor replacement. Setup here class properties.
+     *
+     */
+    abstract protected function bootstrap() : void;
+
+}
+```
+
+**Service division by functionality and accessibility:**
+
+- application services
+- IO services
+
+
+## Application services
+
+Application services are services, which are visible from other code parts via facade pattern in module (but that's not the rule - some instances are used only in internal module calls). Application services accessible from module instance are accessible via facade method, e.g. `$service = main()->module->article->articleService()`. Please see [modules docs](modules.md) for details.
+
+Application services are called from controllers or console commands via module facade methods. These services implements some bussines logic, e.g. ACL checking, some verifications, ... and calls IO services in background. IO services are not directly accessible from controllers or console commands (better security, better modularity, free bond, ...).
+
+
+## IO services
+
+IO service is a service, which executes CRUD operations on datasource, e.g. RDBMS database, cache system, external system (API) and uses concrete middlewares to CRUD operations. IO service can be called only from application service in the same module and this operation is irrelevant oustide datasource. IO service can be called only from application service in the same module and this operation is irrelevant outside module. Controller or console command wants only read or write concrete data and way and datasource is in this view absolutely irrelevant.

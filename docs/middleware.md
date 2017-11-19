@@ -17,7 +17,7 @@ Middleware is everything, what provides access to system and external resources 
 
 All functionality, which contains: bussines logic, concrete implemntations of application services, concrete IO services, models, controllers, ...
 
-We can use only drivers (and packages/classes similary to driver) as a middleware.
+We can use only drivers (and packages/classes similary to driver) as a middleware. Please see [modules docs](modules.md) for better understanding.
 
 
 ## How it works
