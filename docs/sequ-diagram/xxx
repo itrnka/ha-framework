@@ -1,0 +1,45 @@
+http://sequencediagram.org
+
+todo
+
+title How app works
+
+
+
+
+bootstrap->bootstrap: Detect environment
+bootstrap->bootstrap: Read configuration \nby environment
+
+bootstrap->bootstrap: create AppBuilder \nimplementation \nby configuration \n(default or custom)
+
+note over bootstrap: **Prepare \napplication**
+
+bootstrap->bootstrap: Create app instance\n by configuration
+
+bootstrap->App: Create + inject middleware \nIoC container
+bootstrap->App: Create middleware instances \nby configuration \n+ inject to IoC container
+
+bootstrap->App: Create + inject IoC container \nfor modules
+bootstrap->App: Create module instances \nby configuration + inject \nto modules IoC container
+
+note over App: **App is ready \nto use...**
+
+==If access is HTTP ==
+
+note over bootstrap: **Prepare \nHTTP \nhandling**
+
+bootstrap->RouterBuilder: Create router builder by configuration
+
+RouterBuilder->Router: create
+RouterBuilder->Request: create
+RouterBuilder->Response: create
+RouterBuilder->ErrHandler: create
+
+RouterBuilder->Route: create all required routes (in: Request, Response)
+
+bootstrap->Router: Run routing
+Router->Route: foreach all routes
+Route->Route: If URL does \nnot match, go \nto next route
+Route->Route: Check headers
+
+

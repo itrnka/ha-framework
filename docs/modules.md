@@ -91,7 +91,7 @@ Module flow in ha framework provides:
 Module is automatically initialized by configuration from config file. See next chapter *Module(s) configuration* for details. Another, but **highly not recommended way** is:
 
 ```php
-main()->module->myMyModule = new MyModule();
+main()->module->myMyModule = new MyModule(); // really very wrong
 ```
 
 ## Module(s) configuration

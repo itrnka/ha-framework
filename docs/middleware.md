@@ -82,7 +82,7 @@ Middleware flow in ha framework provides:
 Middleware is automatically initialized by configuration from config file. See next chapter *Middleware configuration* for details. Another, but **highly not recommended way** is:
 
 ```php
-main()->middleware->myMiddleware = new MyMiddleware();
+main()->middleware->myMiddleware = new MyMiddleware(); // really very wrong
 ```
 
 ## Middleware configuration
