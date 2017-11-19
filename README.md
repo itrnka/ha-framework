@@ -34,4 +34,6 @@ Functionality is divided to these areas:
   - [HTTP access](docs/http-routing.md): recieve and convert HTTP requests to HTTP responses (router, routes, controllers, request, response, rendering)
   - [Shell access](docs/shell.md): executing scripts from command line
  
- 
+#### Functionality schema
+
+![Framework functionality schema](docs/schema/app-component.png "Framework functionality schema")
