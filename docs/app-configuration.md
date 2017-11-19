@@ -1,6 +1,6 @@
 # App configuration
 
-**Idea of ha framewrok is: everything, what we need, is defined in cofiguration.**
+**Idea of ha framewrok is: everything, what we need to use, is defined in configuration.**
 
 ### About configuration files
 Our configuration is stored in config files in folder `{projectRoot}/php/conf`. Configuration files are not `*.ini` files, but native `*.php` files. Why? In php can be defined closures, we can use constants as `__DIR__`, etc. 
