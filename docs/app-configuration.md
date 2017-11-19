@@ -52,7 +52,7 @@ Application must have unique name in our OS (or in cluster). This name is used e
 $cfg['app.uniqueName'] = md5(__DIR__); // please use concrete name
 ```
 
-Root directory for php files (where is stored `main.php` and `conf` directory). By default is it `{projectRoot}/php` (this is highly recommended).
+Root directory path for project (where is stored `public` and `php` directory). In our examples we use `{projectRoot}` string for this variable.
 
 ```php
 $cfg['app.rootDir'] = dirname(__DIR__);
@@ -128,7 +128,7 @@ $cfg['app.builder.className'] = ha\App\App\AppBuilderDefault::class;
 /** @var string $cfg ['app.uniqueName'] Unique name of app - define unique app name in app "cluster" */
 $cfg['app.uniqueName'] = md5(__DIR__); // please use concrete name
 
-/** @var string Project root directory for php files. */
+/** @var string Project root directory. */
 $cfg['app.rootDir'] = dirname(__DIR__);
 
 /** @var string Public root directory for HTTP access. */
