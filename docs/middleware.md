@@ -2,13 +2,23 @@
 
 ## What is middleware in *ha* framework
 
-Middleware is everything, what provides access to system and external resources (databases, cache systems, external API, other applications, ...). Middleware works as glue between your application and other systems or applications and uses *proxy* or *facade* design pattern for accessing to other functionality or dirver.
+Middleware is everything, what provides access to system and external resources (databases, cache systems, external API, other applications, ...). Middleware works as glue between your application and other systems or applications and uses *proxy* or *facade* design pattern for accessing to other functionality or dirver. Middleware is some service is SOA architecture and is independent from application bussines logic.
+
+**Middleware examples:**
+
+- MySQL driver
+- PDO driver
+- elasticsearch API
+- Twig template engine
+- cache driver (Memcached, Redis, ...)
+- AWS S3 PHP API
 
 ## What is not middleware
 
 All functionality, which contains: bussines logic, concrete implemntations of application services, concrete IO services, models, controllers, ...
 
 We can use only drivers (and packages/classes similary to driver) as a middleware.
+
 
 ## How it works
 

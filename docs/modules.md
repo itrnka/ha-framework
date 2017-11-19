@@ -74,6 +74,13 @@ interface Module
 }
 ```
 
+## Module parts by functionality
+
+- [Model](models.md): represents a single record in some datasource
+- Model collection: array of models with extended functionality and type checking for children 
+- Factory: factory for creating models and model collections
+- Services: application logic, IO logic (read, insert, delete and update data)
+
 ## Why are modules required?
 
 Module flow in ha framework provides:
