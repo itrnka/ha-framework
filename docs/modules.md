@@ -14,7 +14,7 @@ When we have e.g. e-commerce project, in module will be everything, what is requ
 
 ## What is not module
 
-Module is not driver, module does not map request to functionality. Module is complete universal functionality in some complex flow.
+Module is not driver, module does not map request to functionality. Module is complete and specific functionality in some complex flow independent from middleware and access metods.
 
 ## How it works
 
