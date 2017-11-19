@@ -3,7 +3,7 @@
 **Idea of ha framewrok is: everything, what we need to use, is defined in configuration.**
 
 ### About configuration files
-Our configuration is stored in config files in folder `{projectRoot}/php/conf`. Configuration files are not `*.ini` files, but native `*.php` files. Why? In php can be defined closures, we can use constants as `__DIR__`, etc. 
+Our configuration is stored in config files in folder `{projectRoot}/php/conf`. Configuration files are not `*.ini` files, but native `*.php` files. Why? In php can be defined closure functions, we can use constants as `__DIR__`, etc. 
 
 Our application can be used in many different cases (the same code can works in many variations and combinations). Concrete variation has concrete configuration file. What this means? In configuration file is defined:
 - which application implementation would be loaded (AppBuilder class name)
@@ -11,7 +11,8 @@ Our application can be used in many different cases (the same code can works in 
 - which modules would be loaded (list of configrations for concrete module instances)
 - which folder is used for our project files (project files version)
 - which router implementation would be used for handling requests (only HTTP access; RouterBuilder class name is defined)
-- project specific variables
+- which commands would be available from console (only shell access)
+- project specific variables (pseudo global variables)
 - etc.
 
 Concrete configuration file is based on some single environment variable. This variable defines concrete environment name. This name determines, which configuration file is loaded. We can also use custom logic for environment name detection, framework is open for this functionality. Environment variable can be defined in `.htaccess` file (or we can also use anything other, e.g. host name). This logic is defined in initialization file `{projectRoot}/public/index.php` (this file will handle entire application and other php files in public folder are useless and potentialy unsafe).
@@ -31,7 +32,7 @@ Configuration file must begining with variable definition:
 $cfg = []; // do not remove this line, $cfg variable is very important and required for bootstrap
 ```
 
-##### Part 1 - App
+#### Part 1 - Application core
 
 App is created in bootstrap via app builder and builder class name must be defined in configuration. This builder must implements interface `ha\App\App\AppBuilder`. We can use default implementation `ha\App\App\AppBuilderDefault` (suitable for most cases, but in special cases we can use different implementation). App builder is object, which returns builded application instance.
 
@@ -63,7 +64,7 @@ Public directory: here is our `index.php`. By default is it `{projectRoot}/publi
 $cfg['app.publicDirHTTP'] = $cfg['app.rootDir'] . '/public';
 ```
 
-##### Part 2 - project files (prepare PSR-4 autoloading)
+#### Part 2 - Project files (prepare *PSR-4* autoloading)
 
 We must define, where are stored our project files (for this configuration). This directory is used as root for autoloading php files by *PSR-4* standard. This is very very useful, this can be used for versioning. When our project files have e.g. 3 access methods with the same functionality (e.g. API, web page, mobile page) and we need add or modify some access method, we can clone files to another dir and set root for this case to this folder. So we can create next version of app without changing other access methods. This is perfect interface for multiple variations of our app. By default, value is `ver-1.0.0` and full path to this directory is `{projectRoot}/php/ver-1.0.0`. 
 
@@ -80,23 +81,23 @@ $cfg['app.class.namespaceRoots'] = ['MyProject', 'MyMiddleware', 'WebAccess', 'C
 Note: class `MyProject\Module\MySomeModule\MySomeModule` will be autoloaded in this case from location `{projectRoot}/php/ver-1.0.0/MyProject/Module/MySomeModule/MySomeModule.php`.
 
 
-##### Part 3 - middleware configuration
+#### Part 3 - Middleware configuration
 
 See [middleware docs](middleware.md).
 
-##### Part 4 - modules configuration
+#### Part 4 - modules configuration
 
 See [modules docs](modules.md).
 
-##### Part 5A - configure routing (only HTTP access)
+#### Part 5A - configure routing (only HTTP access)
 
 (Todo).
 
-##### Part 5B - configure commands (only shell access)
+#### Part 5B - configure commands (only shell access)
 
 (Todo).
 
-##### Part 6 - define custom variables
+#### Part 6 - define custom variables
 
 This configuration (full variable `$cfg`) is available via `main()->cfg()->get('my.some.configuration.variable')`, so is very usefull store some specific data into configuration. It will works as global variable. We can define our custom pseudo global variable by this example:
 
