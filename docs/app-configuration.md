@@ -85,19 +85,19 @@ Note: class `MyProject\Module\MySomeModule\MySomeModule` will be autoloaded in t
 
 See [middleware docs](middleware.md).
 
-#### Part 4 - modules configuration
+#### Part 4 - Modules configuration
 
 See [modules docs](modules.md).
 
-#### Part 5A - configure routing (only HTTP access)
+#### Part 5A - Routing configuration - only for HTTP access
 
 (Todo).
 
-#### Part 5B - configure commands (only shell access)
+#### Part 5B - Commands configuration - only for shell access (console)
 
 (Todo).
 
-#### Part 6 - define custom variables
+#### Part 6 - Custom variables (pseudo global variables)
 
 This configuration (full variable `$cfg`) is available via `main()->cfg()->get('my.some.configuration.variable')`, so is very usefull store some specific data into configuration. It will works as global variable. We can define our custom pseudo global variable by this example:
 
