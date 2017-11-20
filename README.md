@@ -1,7 +1,10 @@
 # ha framework
-PHP 7.1 framework for professionals with high abstraction. 
+PHP 7.1 framework for professionals with high abstraction. This is really flexible framewrok without balast based on interfaces and some predefined instances which can be changed at any moment. Framework is vendor package with small default required functionality. You can easly add and use everything, what you need. Custom packages, custom ORM, custom drivers...
+
+Framework architecture is based on access type: application logic is strictly differenced from accessing method and from rendering method (such as HTTP application, Rest API application, mobile page, website, console, ...); SOA principes can be very easly applied to your code.
 
 ### Framework highlights
+
 - based on PHP 7.1
 - always strict typing (automatically reduced >50% developers bugs)
 - SEO ready (extra routing on cases, when MVC is bad way)
@@ -21,6 +24,7 @@ PHP 7.1 framework for professionals with high abstraction.
 - functionality versioning (the same project can works with versioned classes by environment, very usefull in development, we can try simply new version on the same host in production, we can use new version for web and API will works on old version, etc.)
 - everything can be configured in config files (every environment can have different configuration, e.g. midlewares, modules, ...; environment is not only 'debug' or 'production', it can be e.g. host)
 - SOA ready
+- simulated string[], int[], float[], bool[] collections for better type checking
 - this is not wrong symphony wrapper such as laravel
 
 ### Framework functionality
