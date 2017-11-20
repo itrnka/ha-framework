@@ -29,7 +29,7 @@ Framework architecture is based on access type: application logic is strictly di
 
 ### Framework functionality
 
-Framework core is very simple and very effective glue between some application parts. Functionality ot this parts is divided to these areas:
+Framework core is very simple and very effective glue between some application parts. Parts functionality is divided to these areas:
 
 - Logic components:
   - [Middleware](docs/middleware.md): glue to external functionality (drivers, packages, etc.)
