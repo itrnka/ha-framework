@@ -3,25 +3,25 @@
 **Idea of ha framewrok is: everything, what we need to use, is defined in configuration.**
 
 ### About configuration files
-Our configuration is stored in config files in folder `{projectRoot}/php/conf`. Configuration files are not `*.ini` files, but native `*.php` files. Why? In php can be defined closure functions, we can use constants as `__DIR__`, etc. 
+Our configuration is stored in config files in folder `{projectRoot}/php/conf`. Configuration files are not `*.ini` files, but native `*.php` files. Why? In php can be defined closure functions, we can use constants as e.g. `__DIR__`, etc. 
 
 Our application can be used in many different cases (the same code can works in many variations and combinations). Concrete variation has concrete configuration file. What this means? In configuration file is defined:
-- which application implementation would be loaded (AppBuilder class name)
-- which middleware would be loaded (list of configrations for concrete middleware instances)
-- which modules would be loaded (list of configrations for concrete module instances)
+- which application implementation is loaded (AppBuilder class name)
+- which middleware is loaded (list of configrations for concrete middleware instances)
+- which modules are loaded (list of configrations for concrete module instances)
 - which folder is used for our project files (project files version)
-- which router implementation would be used for handling requests (only HTTP access; RouterBuilder class name is defined)
-- which commands would be available from console (only shell access)
+- which router implementation is loaded for handling requests (only HTTP access; RouterBuilder class name is defined)
+- which commands are available from console (only shell access)
 - project specific variables (pseudo global variables)
 - etc.
 
-Concrete configuration file is based on some single environment variable. This variable defines concrete environment name. This name determines, which configuration file is loaded. We can also use custom logic for environment name detection, framework is open for this functionality. Environment variable can be defined in `.htaccess` file (or we can also use anything other, e.g. host name). This logic is defined in initialization file `{projectRoot}/public/index.php` (this file will handle entire application and other php files in public folder are useless and potentialy unsafe).
+Concrete configuration file is based on some single environment variable. This variable defines concrete environment name. This name determines, which configuration file is loaded. We can also use custom logic for environment name detection, framework is open for this functionality. Environment variable can be defined in `.htaccess` file (or we can also use anything other, e.g. host name). This logic is defined in initialization file `{projectRoot}/public/index.php` (this file will handle entire application and other php files in public folder are useless and potentialy unsafe). `{projectRoot}/public/index.php` is a bootstrap for HTTP access to application.
 
 App bootstrap detects environment name, then loads configuration file by this name and initializes everything by this configuration.
 
 ### Configuration file location
 
-When we have our environment name, configuration file for this environment will be stored in `{projectRoot}/php/conf/{environmentName}.conf.php`.
+When we have our environment name, configuration file path for this environment is `{projectRoot}/php/conf/{environmentName}.conf.php`.
 
 
 ### Configuration file structure
@@ -34,31 +34,31 @@ $cfg = []; // do not remove this line, $cfg variable is very important and requi
 
 #### Part 1 - Application core	
 
-App is created in bootstrap via app builder and builder class name must be defined in configuration. This builder must implements interface `ha\App\App\AppBuilder`. We can use default implementation `ha\App\App\AppBuilderDefault` (suitable for most cases, but in special cases we can use different implementation). App builder is object, which returns builded application instance.
+**App builder definition:** App is created in bootstrap via app builder. This builder creates single instance of our application and this instance is accessible from all parts of code via `$app = main();`. So builder class name must be defined in configuration for this functionality. This class must implementing interface `ha\App\App\AppBuilder`. We can also use default framework implementation `ha\App\App\AppBuilderDefault`. This is suitable for most cases, but we can use in special case also different implementation. We can simply change functionality of our app with our new implementation. This is unreal in most frameworks. So app builder is object, which builds and returns certain application instance with required interface implementation.
 
 ```php
 $cfg['app.builder.className'] = ha\App\App\AppBuilderDefault::class;
 ```
 
-Store environment name recieved from bootstrap: bootstrap initializes variable `$environmentName` and is usefull making this variable accessible later from our app.
+**Environment name:** Store environment name recieved from bootstrap: bootstrap declares variable `$environmentName` and this variable is accessible in this scope. Is very usefull making this variable accessible from our app as our pseudo global variable.
 
 ```php
 $cfg['app.environmentName'] = $environmentName;
 ```
 
-Application must have unique name in our OS (or in cluster). This name is used e.g. in cache, when cache requires unique key for some variable. For example, in APC(u) we must have prefix for variables (when app1 and app2 uses variable 'x', this variable must be different for app1 and app2 and therefore must be prefixed with unique string).
+**Unique app name:** Application must have unique name in our OS (or in cluster). This name is used e.g. in cache, when cache requires unique key for some variable. For example, in APC(u) we must have prefix for variables (when app1 and app2 uses variable 'x', this variable must be different for app1 and app2 and therefore must be prefixed with unique string). Without this variable are data not unique in some systems and not unique value for this variable can cause large problems accross our applications.
 
 ```php
 $cfg['app.uniqueName'] = md5(__DIR__); // please use concrete name
 ```
 
-Root directory path for project (where is stored `public` and `php` directory). In our examples we use `{projectRoot}` string for this variable.
+**Root directory path for project (project root):** Here is stored `public` and `php` directory. In our examples we use `{projectRoot}` string for this variable.
 
 ```php
 $cfg['app.rootDir'] = dirname(__DIR__);
 ```
 
-Public directory: here is our `index.php`. By default is it `{projectRoot}/public` (this is highly recommended).
+**Public directory path (document root):** Here is our `index.php`. By default is it `{projectRoot}/public` (this is highly recommended). This folder is document root in our server (e.g. nginx, apache, ...).
 
 ```php
 $cfg['app.publicDirHTTP'] = $cfg['app.rootDir'] . '/public';
@@ -66,19 +66,19 @@ $cfg['app.publicDirHTTP'] = $cfg['app.rootDir'] . '/public';
 
 #### Part 2 - Project files (prepare *PSR-4* autoloading)
 
-We must define, where are stored our project files (for this configuration). This directory is used as root for autoloading php files by *PSR-4* standard. This is very very useful, this can be used for versioning. When our project files have e.g. 3 access methods with the same functionality (e.g. API, web page, mobile page) and we need add or modify some access method, we can clone files to another dir and set root for this case to this folder. So we can create next version of app without changing other access methods. This is perfect interface for multiple variations of our app. By default, value is `ver-1.0.0` and full path to this directory is `{projectRoot}/php/ver-1.0.0`. 
+**Autoloading root path:** We must define, where are stored our project files for this current configuration. This directory is used as root for autoloading php files by *PSR-4* standard. This is very very useful, this can be e.g. used for special or new versions of our application code. When our project has e.g. 3 access methods with the same functionality (e.g. API, web page, mobile page) and we need add or modify some access method, we can clone files to another dir and set root for this case to this folder. So we can create next version of our app without changing other access methods and without changing existing files. This is perfect interface for multiple variations of our app. By default, value is `ver-1.0.0` and full path to this directory is `{projectRoot}/php/ver-1.0.0`. 
 
 ```php
 $cfg['app.class.version'] = 'ver-1.0.0';
 ```
 
-Next, when we have defined root directory for class autoloading, we must list namespaces, which are stored in this directory. But we only defines root names of this namespaces. Fo example, when we have classes `MyProject\Module\MySomeModule\MySomeModule`, `MyProject\Module\MySomeModule\Models\MyModel1`, ..., namespace root will be (`MyProject`). Its highly recommend using custom namespace for every access method, it will make access method independent from other code and will be simply removed from your application in future.
+**Supported namespaces:** When we have defined root directory for classes autoloading, we must also define supported namespaces stored in this directory. But we only defines root names of this namespaces. For example, when we have classes `MyProject\Module\MySomeModule\MySomeModule`, `MyProject\Module\MySomeModule\Models\MyModel1`, ..., namespace root is `MyProject`. Its highly recommend using custom namespace for every access method. It will make access method totaly independent from other code and will be simply removed from your application in future.
 
 ```php
 $cfg['app.class.namespaceRoots'] = ['MyProject', 'MyMiddleware', 'WebAccess', 'ConsoleAccess'];
 ```
 
-Note: class `MyProject\Module\MySomeModule\MySomeModule` will be autoloaded in this case from location `{projectRoot}/php/ver-1.0.0/MyProject/Module/MySomeModule/MySomeModule.php`.
+**Autoloading notes:** class `MyProject\Module\MySomeModule\MySomeModule` is automatically loaded in this case from location `{projectRoot}/php/ver-1.0.0/MyProject/Module/MySomeModule/MySomeModule.php`.
 
 
 #### Part 3 - Middleware configuration
@@ -99,7 +99,7 @@ See [modules docs](modules.md).
 
 #### Part 6 - Custom variables (pseudo global variables)
 
-This configuration (full variable `$cfg`) is available via `main()->cfg()->get('my.some.configuration.variable')`, so is very usefull store some specific data into configuration. It will works as global variable. We can define our custom pseudo global variable by this example:
+Configuration defined in this file (full variable `$cfg`) is automatically available from our app instance in all parts of our code. When we have config variable `$cfg['my.some.configuration.variable']`, we can simple accessing this variable from wherever by calling `main()->cfg()->get('my.some.configuration.variable')`. So is very usefull store some specific data into configuration. This principe so allows defining our custom pseudo global variable by this example:
 
 ```php
 $cfg['my.some.key1'] = 123;
@@ -237,4 +237,4 @@ $cfg['my.server.timezone'] = function(): DateTimeZone {
 
 #### Best practices for configuration files
 
-We can have shared configuration file (e.g. `{projectRoot}/conf/_shared.php`) and this file will be included into concrete configuration. Concrete configuration then only appends some specific data. We extendig our base configuration in this case with specific configuration data.
+We can have shared configuration file (e.g. `{projectRoot}/conf/_shared.php`) and this file can be included into concrete configuration file. Concrete configuration then only appends or overrides some specific data. This extends our base configuration in this case with specific configuration data.

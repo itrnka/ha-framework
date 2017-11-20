@@ -98,15 +98,15 @@ Module flow in ha framework provides:
 
 ## How to add module instance to app
 
-Module is automatically initialized by configuration from config file. See next chapter *Module(s) configuration* for details. Another, but **highly not recommended way** is:
+Modules are automatically initialized from configuration stored in config file. See next chapter *Module(s) configuration* for details. This code not works (IoC container is locked after initialization):
 
 ```php
-main()->module->myMyModule = new MyModule(); // really very wrong, this makes app bootstrap
+main()->module->myMyModule = new MyModule(); // error, IoC container is locked!
 ```
 
 ## Module(s) configuration
 
-Module(s) configuration is stored in config file in `$cfg['modules']` array. Every item is array, which has two items: *(string) className* and *(array) configuration*. Key `name` must be unique in configruartion, this defines unique name of instance in module IoC container. Framework automatically creates instances from this configuration and adds theirs to IoC module container in app bootstrap. 
+Module(s) configuration is stored in config file in `$cfg['modules']` array. Every item is array, which has two items: *(string) className* and *(array) configuration*. Key `name` must be unique in configruartion, this defines unique name of instance in module IoC container. Framework automatically creates instances from this configuration and adds theirs to IoC module container in app bootstrap. IoC container is locked after this process and access to items is read only.
 So `name` key is always required in configuration, other keys are specific by module (in our example `sqlMiddlewareName`, `cacheTTL`) and they defines real configuration data.
 
 ```php
