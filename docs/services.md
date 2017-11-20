@@ -64,3 +64,9 @@ Application services are called from controllers or console commands via module 
 ## IO services
 
 IO service is a service, which executes CRUD operations on datasource, e.g. RDBMS database, cache system, external system (API) and uses concrete middlewares to CRUD operations. IO service can be called only from application service in the same module and this operation is irrelevant oustide datasource. IO service can be called only from application service in the same module and this operation is irrelevant outside module. Controller or console command wants only read or write concrete data and way and datasource is in this view absolutely irrelevant.
+
+### Best practices with IO services
+
+Every IO service will use only one middleware. Very wrong way is combining multiple datasources in one IO service, e.g. cache and SQL. Better way is using separate IO service for every used middleware instance.
+
+When we can use multiple datasorurces in cascade for the same data. .... (also in future is it possible)  ------- to do - under construction 

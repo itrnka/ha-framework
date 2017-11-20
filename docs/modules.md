@@ -78,9 +78,9 @@ interface Module
 
 ## Module parts by functionality
 
-- [Model](models.md): represents a single record in some datasource
-- Model collection: array of models with extended functionality and type checking for children 
-- Factory: factory for creating models and model collections
+- [Models](models.md): represents a records in some datasource
+- Models collections: array of models with extended functionality and type checking for children 
+- Factory: factory for creating models and models collections
 - [Services](services.md): application/bussines logic, IO logic (read, insert, delete and update data)
 
 ## Why are modules required?
@@ -89,10 +89,11 @@ Module flow in ha framework provides:
 
 - unified and standardized access to logic
 - logic separated from other logic (logic is exactly divided into modules)
-- large dependency injections in our classes are not required, module is accessible from all parts of code via `main()->module->myModule`
+- large dependency injections in our classes are not required, module is accessible from all parts of code via 
+`main()->module->myModule`
 - lazy initialization of services
 - automatic initialization by configuration in app bootstrap
-- module makes public access only for concrete functionality (everything other is private), this makes abstraction from large logic in module services
+- module makes public access only for concrete functionality (everything other is private outside module); this separates and encapsualtes large logic in module services and subservices from other app parts, so accessible are only required services
 
 
 ## How to add module instance to app
@@ -100,7 +101,7 @@ Module flow in ha framework provides:
 Module is automatically initialized by configuration from config file. See next chapter *Module(s) configuration* for details. Another, but **highly not recommended way** is:
 
 ```php
-main()->module->myMyModule = new MyModule(); // really very wrong
+main()->module->myMyModule = new MyModule(); // really very wrong, this makes app bootstrap
 ```
 
 ## Module(s) configuration
@@ -149,7 +150,7 @@ This example shows, how we can have separated logic for users, articles and lang
 
 ## How to create new module
 
-Our class must implements `ha\Internal\DefaultClass\Module\Module` or must be extended from `ha\Internal\DefaultClass\Module\ModuleDefaultAbstract` (this abstract class has default implementation of module interface). Abstract is useful, when we can use normal functionality. If we need e.g. special initializon in constructor, we can implement an interface.
+Our class must implement interface `ha\Internal\DefaultClass\Module\Module` or must be extended from `ha\Internal\DefaultClass\Module\ModuleDefaultAbstract` (this abstract class has default implementation of module interface). Abstract is useful, when we can use normal functionality. If we need e.g. special initializon in constructor, we can implement an interface.
 
 ```php
 class ArticleModule extends ModuleDefaultAbstract
@@ -201,7 +202,7 @@ class ArticleModule extends ModuleDefaultAbstract
 $article = main()->module->article->factory()->createArticle(Article::ARTCILE_TYPE_BLOG);
 ```
 
-Now we can add facade method(s) for accessing to some service(s).
+Now we can add facade method(s) for accessing to some service(s). Please see [services docs](services.md) for more details about services.
 
 ```php
 class ArticleModule extends ModuleDefaultAbstract
@@ -214,7 +215,7 @@ class ArticleModule extends ModuleDefaultAbstract
     public function articleService(): ArticleService
     {
         if (!isset($this->articleService)) {
-            // goog idea is injecting module (access to module funcionality and configuration in service)
+            // service requires module as argument (easy access to module in service)
             $this->articleService = new ArticleAppService($this);
             // we have access to self configuration via: $this->cfg($configurationKey);
 	    $this->articleService->setTTL($this->cfg('cacheTTL'));
