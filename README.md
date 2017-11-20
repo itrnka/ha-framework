@@ -1,5 +1,5 @@
 # ha framework
-PHP 7.1 framework for professionals with high abstraction. This is really flexible framewrok without balast based on interfaces and some predefined instances which can be changed at any moment. Framework is vendor package with small default required functionality. You can easly add and use everything, what you need. Custom packages, custom ORM, custom drivers...
+PHP 7.1 framework for professionals with high abstraction. This is really flexible framewrok without balast and is based on interfaces and some predefined instances, which can be changed at any moment. Framework is vendor package with small default required functionality. You can easly add and use everything, what you need. Custom packages, custom ORM, custom drivers...
 
 Framework architecture is based on access type: application logic is strictly differenced from accessing method and from rendering method (such as HTTP application, Rest API application, mobile page, website, console, ...); SOA principes can be very easly applied to your code.
 
@@ -14,7 +14,7 @@ Framework architecture is based on access type: application logic is strictly di
 - default ORM not implemented, manipulation with data is open (we can have very complex objects on which are parts loaded from other datasource as primary data)
 - extreme IDE support (everything is autocompleted, e.g. in *PHP Storm*)
 - lightweight and allways reusable code (no useless packages in core functionality)
-- based on interfaces (everything can be changed or extended without large rewrites)
+- based on interfaces (everything can be changed or extended without large code rewrites)
 - everything is instance, static calls missing (very good dependency injection)
 - low memory consuption
 - model collections with type protection (e.g. category could not be added to products collection)
@@ -22,9 +22,9 @@ Framework architecture is based on access type: application logic is strictly di
 - access to model properties is case insensitive and camelCase/dash_case insensitive (very useful for cases, when db fields are dash_cased and properties camelCased, etc.)
 - application structure is independed from usage (the same functionality with different access methods and rendering, such as API, web page, mobile page, shell access, ...; project is not only web page and has separated HTTP access)
 - functionality versioning (the same project can works with versioned classes by environment, very usefull in development, we can try simply new version on the same host in production, we can use new version for web and API will works on old version, etc.)
-- everything can be configured in config files (every environment can have different configuration, e.g. midlewares, modules, ...; environment is not only 'debug' or 'production', it can be e.g. host)
-- SOA ready
-- simulated string[], int[], float[], bool[] collections for better type checking
+- everything can be configured in config files and application is fully builded from config file (every environment can have different configuration, e.g. midlewares, modules, ...; environment is not only 'debug' or 'production', it can be e.g. host), it works similarly as docker-compose.yml
+- SOA ready, you can easly write service oriented applications
+- simulated string[], int[], float[], bool[] collections for better array type checking in PHP
 - this is not wrong symphony wrapper such as laravel
 
 ### Framework functionality
