@@ -56,7 +56,7 @@ abstract class ModuleServiceDefaultAbstract implements ModuleService
 
 ## Application services
 
-Application services are services, which are visible from other code parts via facade pattern in module (but that's not the rule - some instances are used only in internal module calls). Application services accessible from module instance are accessible via facade method, e.g. `$service = main()->module->article->articleService()`. Please see [modules docs](modules.md) for details.
+Application services are services, which are visible from other code parts via facade pattern in module (but that's not the rule - some instances are used only in internal module calls). Application services accessible from module instance are accessible via facade methods, e.g. `$service = main()->module->article->articleService()`. Please see [modules docs](modules.md) for details.
 
 Application services are called from controllers or console commands via module facade methods. These services implements some bussines logic, e.g. ACL checking, some verifications, ... and calls IO services in background. IO services are not directly accessible from controllers or console commands (better security, better modularity, free bond, ...).
 
@@ -64,6 +64,14 @@ Application services are called from controllers or console commands via module 
 ## IO services
 
 IO service is a service, which executes CRUD operations on datasource, e.g. RDBMS database, cache system, external system (API) and uses concrete middlewares to CRUD operations. IO service can be called only from application service in the same module and this operation is irrelevant oustide datasource. IO service can be called only from application service in the same module and this operation is irrelevant outside module. Controller or console command wants only read or write concrete data and way and datasource is in this view absolutely irrelevant.
+
+IO service:
+
+- transforms standardized query from parent application service to middleware query and executes this query via middleware
+- transforms module models to midleware models and inserts or updates this models via middleware query (when called method is for inserting or updating data)
+- transforms data loaded from datasource via middleware to module models or models collections and returns these models (when called method is for selecting data) 
+
+So IO service is also data transformator between middleware and application service. Application service works only wwith models inependent from datasource.
 
 ### Best practices with IO services
 
