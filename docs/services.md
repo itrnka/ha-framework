@@ -58,7 +58,7 @@ abstract class ModuleServiceDefaultAbstract implements ModuleService
 
 Application services are services, which are visible from other code parts via facade pattern in module (but that's not the rule - some instances are used only in internal module calls). Application services accessible from module instance are accessible via facade methods, e.g. `$service = main()->module->article->articleService()`. Please see [modules docs](modules.md) for details.
 
-Application services are called from controllers or console commands via module facade methods. These services implements some bussines logic, e.g. ACL checking, some verifications, ... and calls IO services in background. IO services are not directly accessible from controllers or console commands (better security, better modularity, free bond, ...).
+Application services are called from controllers or console commands via module facade methods. These services implements some bussines logic, e.g. ACL checking, some verifications, ... and calls IO services in background. IO services are not directly accessible from controllers or console commands (better security, better modularity, free bond, ...). Controller or console command wants only read or write concrete data and way and datasource is in this view absolutely irrelevant.
 
 
 ## IO services
