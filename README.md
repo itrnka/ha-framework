@@ -33,7 +33,10 @@ Framework core is very simple and very effective glue between some application p
 
 - Logic components:
   - [Middleware](docs/middleware.md): glue to external functionality (drivers, packages, etc.)
-  - [Modules](docs/modules.md): application logic (application services, IO services, models)
+  - [Modules](docs/modules.md): application logic is divided to:
+    - [Services](docs/services.md)
+    - [Models](docs/models.md)
+    - [Models collections](docs/models-collections.md)
 - Access to application:
   - [HTTP access](docs/http-routing.md): recieve and convert HTTP requests to HTTP responses (router, routes, controllers, request, response, rendering)
   - [Shell access](docs/shell.md): executing scripts from command line
