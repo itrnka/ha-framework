@@ -6,7 +6,7 @@ Framework architecture is based on access type: application logic is strictly di
 ### Framework highlights
 
 - based on PHP 7.1
-- always strict typing (automatically reduced >50% developers bugs)
+- always strict typing, everything has interface, everything has also scalar typing and return value typing (automatically reduced >50% developers bugs)
 - SEO ready (extra routing on cases, when MVC is bad way)
 - precise HTTP handling (headers controll, request method checking, ...)
 - ready for multiple data sources (very good support for multiple instances of the same type and also different type of drivers)
