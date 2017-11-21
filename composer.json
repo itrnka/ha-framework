@@ -7,7 +7,9 @@
         "php",
         "php7",
         "php7.1",
-        "framework"
+        "framework",
+        "php-framework",
+        "ha-framework"
     ],
     "homepage": "https://github.com/itrnka/ha-framework",
     "time": "2017-11-15",
