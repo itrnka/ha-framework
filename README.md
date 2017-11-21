@@ -3,6 +3,8 @@ PHP 7.1 framework for professionals. This is really flexible framewrok without b
 
 Framework architecture is based on access type: application logic is strictly differenced from accessing method and from rendering method (such as HTTP application, Rest API application, mobile page, website, console, ...); SOA principes can be very easly applied to your code.
 
+This framework works as vendor package and can be included through composer.
+
 ### Installation
 
 Framework can be installed via [ha project skeleton](https://github.com/itrnka/ha-project-skeleton/blob/master/README.md). Framework is only composer package and requires bootstrap from this simple skeleton.
