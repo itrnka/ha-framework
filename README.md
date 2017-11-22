@@ -1,7 +1,14 @@
-# ha framework
-PHP 7.1 framework for professionals with high abstraction. This is really flexible framewrok without balast and is based on interfaces and some predefined instances, which can be changed at any moment. Framework is vendor package with small default required functionality. You can easly add and use everything, what you need. Custom packages, custom ORM, custom drivers...
+![ha framework](https://github.com/itrnka/ha-framework/blob/master/docs/img/ha-logo.png "ha framework")
+
+*ha* framework is PHP 7.1 framework for professionals. This is really flexible framewrok without balast and is based on interfaces and some predefined instances, which can be changed at any moment. Framework is vendor package with small default required functionality. You can easly add and use everything, what you need. Custom packages, custom ORM, custom drivers...
 
 Framework architecture is based on access type: application logic is strictly differenced from accessing method and from rendering method (such as HTTP application, Rest API application, mobile page, website, console, ...); SOA principes can be very easly applied to your code.
+
+This framework works as vendor package and can be included through composer.
+
+### Installation
+
+Framework can be installed via [ha project skeleton](https://github.com/itrnka/ha-project-skeleton/blob/master/README.md). Framework is only composer package and requires bootstrap from this simple skeleton.
 
 ### Framework highlights
 
@@ -31,13 +38,13 @@ Framework architecture is based on access type: application logic is strictly di
 
 Framework core is very simple and very effective glue between some application parts. Parts functionality is divided to these areas:
 
-- Logic components:
+- **Logic components:**
   - [Middleware](docs/middleware.md): glue to external functionality (drivers, packages, etc.)
   - [Modules](docs/modules.md): application logic is divided to:
     - [Services](docs/services.md)
     - [Models](docs/models.md)
     - [Models collections](docs/models-collections.md)
-- Access to application:
+- **Access to application:**
   - [HTTP access](docs/http-routing.md): recieve and convert HTTP requests to HTTP responses (router, routes, controllers, request, response, rendering)
   - [Shell access](docs/shell.md): executing scripts from command line
  
