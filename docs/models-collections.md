@@ -18,25 +18,24 @@ Collection in *ha* framework is native PHP array wrapped with extra usefull func
 
 
 
-## Data binding principe
+## Data binding principe (ORM based on real objects)
 
+> This principe could be used in many cases and can be used as ORM like principe, which is independent from datasource. Therefore can be used name "ORM based on real objects" for this principe.
+> We can use multiple variations (in context *A* we can bind only *X* and *Y*, in context *B* we can bind only *Y*, ...). This significantly speeds up app responses.
+> This principe also prevents problems with too many queries to datasources - e.g. single call to datasource and not multiple calls in foreach loops.
 
 #### Case study
 
-- books are stored in MySQL database
+- books are stored in MySQL database without authors
 - authors are accessible via API from external resource
-- xxx
+- book knows as reference only property authorId (this is known reference "book has author")
+- in app logic is required this: we need working with books with known authors
 
-TODO
-
-We can use multiple variations (in context A we can bind only X and Y, in context B we can bind only Y, ...), what speeds up app responses.
-
-This principe prevents problems with too many queries to datasources.
-
+Standard ORM based on anotations is dependent on concrete db connection. This can not be used in this case without data sync to local database, but sync is unavailable. This is big problem. But we can use simple and datasource independent principe described in this chapter. We can use models and models collections, which are independent from datasources. When collection will be have some method for loading data by some key in items, we can use in this method some (also external) service, which is not dependent on datasource.
 
 #### Example implementation
 
-We need create a method in our collection for binding concrete data automatically (in this example will be used for binding authors e.g. to books):
+We need create a method in our collection for binding concrete data automatically and that is all. In this example will be used relation "bind authors to books":
 
 ```php
 class Books extends ModelCollectionDefaultAbstract
