@@ -598,7 +598,7 @@ class Car extends ModelDefaultAbstract
 }
 ```
 
-As we can see, model uses protected properties. In class anotation are defined this properties as `@property int $id`. This helps autocompleting property names in your IDE editor.
+As we can see, model uses protected or private properties. In class anotation are defined this properties as `@property int $id`. This helps autocompleting property names in your IDE editor.
 
 Very important and required is constant `COLLECTION_CLASS`. This defines which class name is used, when we converting model to models collection and when is appended model to collection. Model and collection is so protected to other types (e.g. integer could not be added to collection and many developer errors are prevented with this principe). This is typehinting implementation.
 
