@@ -346,9 +346,9 @@ Collection is used in many cases in services, when we converting data recieved f
 
 ## Data binding principe (ORM based on real objects)
 
-> This principe could be used in many cases and can be used as ORM like principe, which is independent from datasource. Therefore can be used name "ORM based on real objects" for this principe.
-> We can use multiple variations (in context *A* we can bind only *X* and *Y*, in context *B* we can bind only *Y*, ...). This significantly speeds up app responses.
-> This principe also prevents problems with too many queries to datasources - e.g. single call to datasource and not multiple calls in foreach loops.
+> This principe could be used in many cases and can be used as ORM like principe, which is independent from datasource. Therefore can be used name "ORM based on real objects" for this principe. Perfect is a fact, that this is also independent from relation types such as *1:n*, *n:m*, *1:1*, ... and therefore are not required methods such as *hasOne()*, *hasNamny()*, etc.
+> We can use multiple binding variations (in context *A* we can bind only *X* and *Y*, in context *B* we can bind only *Y*, ...). This significantly speeds up app responses.
+> This principe also prevents problems with too many queries to datasources - e.g. single call to datasource and not multiple calls in foreach loops. 
 
 #### Case study
 
