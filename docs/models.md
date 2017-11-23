@@ -146,7 +146,7 @@ $value = $car->getEngineVolume();
 
 ### Special constant for working with collections
 
-Every model can be converted to associated collection. For this functionality must be defined special constant `COLLECTION_CLASS`. Value of this constant is collection class name, which is default for this model. This collection can have extra functionality for data binding and manipulation with models (see [Models collections](modles-collections.md)). Example:
+Every model can be converted to associated collection. For this functionality must be defined special constant `COLLECTION_CLASS`. Value of this constant is collection class name, which is default for this model. This collection can have extra functionality for data binding and manipulation with models (see [Models collections](models-collections.md)). Example:
 
 ```php
 const COLLECTION_CLASS = Cars::class;
@@ -273,7 +273,7 @@ stdClass (4) (
 
 #### Converting model to collection
 
-Method `createAssociatedCollection()` creates a new collection by model constant `COLLECTION_CLASS` class name and appends source model to this collection. Also key in collection can be defined. This collection can have extra functionality for data binding and has special methods to manipulation with models (see [Models collections](modles-collections.md)). So we can add functionality only to collection and this functionality is accessible also for model(s). Trick is in conversion to collection, which has required functionality. Collection methods can be called then from model.
+Method `createAssociatedCollection()` creates a new collection by model constant `COLLECTION_CLASS` class name and appends source model to this collection. Also key in collection can be defined. This collection can have extra functionality for data binding and has special methods to manipulation with models (see [Models collections](models-collections.md)). So we can add functionality only to collection and this functionality is accessible also for model(s). Trick is in conversion to collection, which has required functionality. Collection methods can be called then from model.
 
 
 ```php
