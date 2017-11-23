@@ -370,7 +370,7 @@ class Car extends ModelDefaultAbstract
     protected $engineVolume;
 
     /** @var int */
-    protected $id;
+    private $id;
 
     /** @var string */
     protected $name;
