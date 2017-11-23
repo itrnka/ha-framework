@@ -15,7 +15,325 @@ Collection in *ha* framework is native PHP array wrapped with extra usefull func
 
 ## Objects collections
 
+### Working with collections
 
+Collection implements some interfaces as array, so we can use our collection in many cases as native array, e.g. `foreach`, access by index `$coll[]`, `$coll['x']`, etc. Every collection also has some extra functionality described in this chapter. Some functionality was inspired by other popular frameworks.
+
+### Converting collections to array
+
+We can use magic method `__invoke()`, which allows calling collection as function. It returns array with items as array or as stdClass. 
+
+```php
+// prepare collection
+$carBrands = new CarBrands(); // please use factory in real code
+// add models
+$carBrands[] = new CarBrand(['id' => 20, 'name' => 'Volvo']);
+$carBrands[] = new CarBrand(['id' => 94, 'name' => 'Peugeot']);
+// convert to array
+$carBrandsArr = $carBrands();
+$carBrandsObj = $carBrands(true);
+```
+
+```
+Dump:
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ $carBrandsArr                                                                │
+└──────────────────────────────────────────────────────────────────────────────┘
+array (2) [
+    0 => array (2) [
+        'id' => integer 20
+        'name' => string (5) "Volvo"
+    ]
+    1 => array (2) [
+        'id' => integer 94
+        'name' => string (7) "Peugeot"
+    ]
+]
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ $carBrandsObj                                                                │
+└──────────────────────────────────────────────────────────────────────────────┘
+array (2) [
+    0 => stdClass (2) (
+        public 'id' -> integer 20
+        public 'name' -> string (5) "Volvo"
+    )
+    1 => stdClass (2) (
+        public 'id' -> integer 94
+        public 'name' -> string (7) "Peugeot"
+    )
+]
+```
+
+### Converting collections to (JSON) string
+
+Magic method `__toString()` allows converting collection to string. This string is in JSON format. Usefull for logging, dumping data, etc.
+
+```php
+// prepare collection
+$carBrands = new CarBrands(); // please use factory in real code
+// add models
+$carBrands[] = new CarBrand(['id' => 20, 'name' => 'Volvo']);
+$carBrands[] = new CarBrand(['id' => 94, 'name' => 'Peugeot']);
+// convert to string
+$carBrandsStr = strval($carBrands);
+```
+
+```
+Dump:
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ $carBrandsStr                                                                │
+└──────────────────────────────────────────────────────────────────────────────┘
+string (53) "[{"id":20,"name":"Volvo"},{"id":94,"name":"Peugeot"}]"
+```
+
+### How to determine, whether collection contains item with concrete property value
+
+Method `contains()` is usefull to determining, whether collection contains item, which property value is some concrete value. For each item in collection is compared property value and entered value in strict mode.
+
+```php
+// prepare collection
+$carBrands = new CarBrands(); // please use factory in real code
+// add models
+$carBrands[] = new CarBrand(['id' => 20, 'name' => 'Volvo']);
+$carBrands[] = new CarBrand(['id' => 94, 'name' => 'Peugeot']);
+// contains test
+$result1 = $carBrands->contains('id', 94);
+$result2 = $carBrands->contains('id', 95);
+```
+
+```
+Dump:
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ $result1                                                                     │
+└──────────────────────────────────────────────────────────────────────────────┘
+boolean true
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ $result2                                                                     │
+└──────────────────────────────────────────────────────────────────────────────┘
+boolean false
+
+```
+
+### How to extract some property from items
+
+Method `extract()` can be used, when we need to get set of values from items property. From each item in collection is exctracted property value and is collected in returned array. Values could be returned as unique (removed duplicitated values) and limit for values in returned array is also supported.
+
+```php
+// prepare collection
+$carBrands = new CarBrands(); // please use factory in real code
+// add models
+$carBrands[] = new CarBrand(['id' => 20, 'name' => 'Volvo']);
+$carBrands[] = new CarBrand(['id' => 94, 'name' => 'Peugeot']);
+// extract
+$ids = $carBrands->extract('id');
+$names = $carBrands->extract('name');
+```
+
+```
+Dump:
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ $ids                                                                         │
+└──────────────────────────────────────────────────────────────────────────────┘
+array (2) [
+    0 => integer 20
+    1 => integer 94
+]
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ $names                                                                       │
+└──────────────────────────────────────────────────────────────────────────────┘
+array (2) [
+    0 => string (5) "Volvo"
+    1 => string (7) "Peugeot"
+]
+
+```
+
+### How to filter items in collection
+
+Note: this collection is used in filter examples:
+
+```php
+// prepare collection
+$carBrands = new CarBrands(); // please use factory in real code
+// add models
+$carBrands[] = new CarBrand(['id' => 20, 'name' => 'Volvo']);
+$carBrands[] = new CarBrand(['id' => 94, 'name' => 'Peugeot']);
+```
+
+Method `filter()` returns copy of current collection with all items, for closure function `function($item) { ... }` returns `true`. Limit of filtered items is also supported.
+
+```php
+$filtered = $carBrands->filter(function(CarBrand $brand): bool {
+    return ($brand->id > 30);
+});
+```
+
+```
+Dump:
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ $filtered                                                                    │
+└──────────────────────────────────────────────────────────────────────────────┘
+Examples\Module\CarModule\Model\CarBrand\CarBrands (1) (
+    public 1 -> Examples\Module\CarModule\Model\CarBrand\CarBrand (2) (
+        protected 'id' -> integer 94
+        protected 'name' -> string (7) "Peugeot"
+    )
+)
+```
+
+Method `reject()` returns copy of current collection without all items, for closure function `function($item) { ... }` returns `true`.
+
+```php
+$filtered = $carBrands->reject(function(CarBrand $brand): bool {
+    return ($brand->id > 30);
+});
+```
+
+```
+Dump:
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ $filtered                                                                    │
+└──────────────────────────────────────────────────────────────────────────────┘
+Examples\Module\CarModule\Model\CarBrand\CarBrands (1) (
+    public 0 -> Examples\Module\CarModule\Model\CarBrand\CarBrand (2) (
+        protected 'id' -> integer 20
+        protected 'name' -> string (5) "Volvo"
+    )
+)
+```
+
+Method `where()` returns copy of current collection with all items, which property has some value. Limit of filtered items is also supported.
+
+```php
+$filtered = $carBrands->where('id', 94);
+```
+
+```
+Dump:
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ $filtered                                                                    │
+└──────────────────────────────────────────────────────────────────────────────┘
+Examples\Module\CarModule\Model\CarBrand\CarBrands (1) (
+    public 1 -> Examples\Module\CarModule\Model\CarBrand\CarBrand (2) (
+        protected 'id' -> integer 94
+        protected 'name' -> string (7) "Peugeot"
+    )
+)
+```
+
+Method `whereNot()` returns copy of current collection with all items, which property has not some value. Limit of filtered items is also supported.
+
+```php
+$filtered = $carBrands->whereNot('id', 94);
+```
+
+```
+Dump:
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ $filtered                                                                    │
+└──────────────────────────────────────────────────────────────────────────────┘
+Examples\Module\CarModule\Model\CarBrand\CarBrands (1) (
+    public 0 -> Examples\Module\CarModule\Model\CarBrand\CarBrand (2) (
+        protected 'id' -> integer 20
+        protected 'name' -> string (5) "Volvo"
+    )
+)
+```
+
+Method `whereIn()` returns copy of current collection with all items, which property is contained in provided array. Limit of filtered items is also supported.
+
+```php
+$filtered = $carBrands->whereIn('id', [94, 95, 96, 97]);
+```
+
+```
+Dump:
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ $filtered                                                                    │
+└──────────────────────────────────────────────────────────────────────────────┘
+Examples\Module\CarModule\Model\CarBrand\CarBrands (1) (
+    public 1 -> Examples\Module\CarModule\Model\CarBrand\CarBrand (2) (
+        protected 'id' -> integer 94
+        protected 'name' -> string (7) "Peugeot"
+    )
+)
+```
+### How to get first item from collection
+
+Method `first()` provides this funtionality. If collection is empty, a *NotFoundException* is throwed. Therefore *try-catch* block is required.
+
+```php
+$model = $carBrands->first();
+```
+
+```
+Dump:
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ $model                                                                       │
+└──────────────────────────────────────────────────────────────────────────────┘
+Examples\Module\CarModule\Model\CarBrand\CarBrands (1) (
+    public 0 -> Examples\Module\CarModule\Model\CarBrand\CarBrand (2) (
+        protected 'id' -> integer 20
+        protected 'name' -> string (5) "Volvo"
+    )
+)
+```
+
+### How to determine, whether collection is empty
+
+Method `isEmpty()` provides this funtionality. If collection is empty, method return `true`, otherwise `false` is returned. 
+
+```php
+$result = $carBrands->isEmpty();
+```
+
+```
+Dump:
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ $result                                                                      │
+└──────────────────────────────────────────────────────────────────────────────┘
+boolean false
+```
+
+### How to create empty copy of collection
+
+Method `newSelf()` creates empty collection of the same type as source collection. Factory call is therefore not required in some cases and also `new` keyword. 
+
+```php
+$emptyCollection = $carBrands->newSelf();
+```
+
+### How to split collection by value
+`splitToGroups()`
+
+### How to change items index in collection by item property value
+`remap()`
+
+> Please use only primary/unique keys as property name for index in this case. Duplications will be overwriten.
+
+### How to modify collection items
+
+
+`modify()`
+`modifyItemPropertyValue()`
+
+
+### Usefull methods for services
+
+Collection is used in many cases in services, when we converting data recieved from datasources to local models. Very usefull are getters and setters for some metadata, data about pagination and methods to determine name of datasource, when collection was created. Here is list of supported getters and setters:
+
+`getAffectedRows()`,
+`getMetaData()`,
+`getPageNumber()`,
+`getPerPageCount()`,
+`getProviderName()`,
+`getTotalCount()`,
+`setAffectedRows()`,
+`setMetaData()`,
+`setPageNumber()`,
+`setPerPageCount()`,
+`setProviderName()`,
+`setTotalCount()`.
 
 
 ## Data binding principe (ORM based on real objects)
