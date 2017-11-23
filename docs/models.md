@@ -2,191 +2,599 @@
 
 Model in ha framework is simple class, which holds only raw data. This is very important for many cases, when we create very complex and large models from multiple datasources. Primary object can be loaded from RDBMS database (such as MySQL) and children can be loaded e.g. from cache. Result in one complex model, which in application logic is single object.
 
-This principe is vry usefull in cases, when we use multiple storages for the same data. For exmple, when primary database is MySQL (slow) and secondary database is Elasticsearch (high speed). We can store data in MySQL and the same data are replicated in Elasticsearch. Multiple models for each storage are not good, one model is enough (less time to development, better clarity, ...).
+This principe is very usefull in cases, when we use multiple storages for the same data. For exmple, when primary database is MySQL (slow) and secondary database is Elasticsearch (high speed). We can store data in MySQL and the same data are replicated in Elasticsearch. Multiple models for each storage are not good, one model is enough (less time to development, better clarity, ...). For example, also cache is  other datasource.
 
 When we execute read operation on datasource, read method in service transforms loaded row into our model, write method in service converts model to datasource row and writes it.
 
 Model in *ha* framework is extended from abstract `ha\Internal\DefaultClass\Model\ModelDefaultAbstract` (and so implements interface `ha\Internal\DefaultClass\Model\ModelDefaultAbstract\Model`). This provides default model functionality.
 
-## Model functionality
-
-- access to properties is case insensitive
-- access to properties is camelCase/dash_case insensitive (we can use `$model->myId` or `$model->my_id` and  accessed property is the same); this is usefull, when data are stored in storage in dash_case format and model has defined properties in camelCase format. Property names are cached, so accees to properties is fast (property name translation is very fast).
-- we can convert property name between camelCase and dash_case format via methods `underscoredToProperty()` and `propertyToUnderscored()` on model.
-- we can detect property getter/setter method name via methods `propertyToSetter()` and `propertyToGetter()` on model.
-- model can be converted to array via `$model->getAsArray()`
-- model can be converted to stdClass (raw php object) via `$model->getAsArray()`
-- we can fill model properties from array via `$model->fillFromArray()`
-- binding data to model via methods defined in models collection (see collections for details)
-- usefull configurable `__invoke()` method (we can use `$model()` method for many usefull cases with arguments)
-
-ORM based functionality for models is wrong way. ORM is very slow and is directly and inseparably depended on concrete datasource instance. Principe used for models in *ha* framework is datasource independent and is very flexible. So models are absolutely separated from datasources and can be used in future for other datasources without code changes. Also datasource can be removed from application without model changes. This is very important for code reusability. The same models can be used accross multiple projects.
+Note: ORM based functionality for models is wrong way. ORM is very slow and is directly and inseparably depended on concrete datasource instance. Principe used for models in *ha* framework is datasource independent and is very flexible. So models are absolutely separated from datasources and can be used in future for other datasources without code changes. Also datasource can be removed from application without model changes. This is very important for code reusability. The same models can be used accross multiple projects.
 
 
-## Model scheme
+## Working with models
 
-Example class:
+**Note: examples used in this chapter are based on [class example](#model-class-example) at end of this document.**
+
+### How model properties works
+
+Please define your properties scope to *protected* or *private*. If property has *public* scope, type checking does not working. If your model is extended from abstract `ha\Internal\DefaultClass\Model\ModelDefaultAbstract`, direct public access to model property is translated via `__get()` and `__set()` magic methods to defined getter or setter. This principe provides also camelCase/dash_case insensitivity and case insensitivity for direct access to model properties. Name translation is cached and is very fast.
+
+So if getter is defined, property is directly accessible for reading. If setter is defined, property is directly accessible for writing. E.g.:
 
 ```php
+$model->id = 5;
+// is translated to
+$model->setId(5);
+```
+
+Public access to model properties is therefore depenent on defining getters/setters and can be combined, e.g. when we define only getter, property is read only from public scope. Please see section *Model class example* to better understanding at end of this document.
+
+Please use camelCase format for model properties, some optional functionality is based on camelCase format.
+
+
+### How to set model properties
+
+Automatically set properties on creating model from native array:
+
+```php
+$rawData = [
+    'id' => 75,
+    'name' => 'My car',
+    'ENGINE_VOLUME' => 1.6, // camelCase/dash_case + case insensitivity example
+];
+$car = new Car($rawData);
+```
+```
+Dump:
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ $car                                                                         │
+└──────────────────────────────────────────────────────────────────────────────┘
+Examples\Module\CarModule\Model\Car\Car (7) (
+    protected 'brand' -> null
+    protected 'brandId' -> null
+    protected 'color' -> null
+    protected 'engineVolume' -> double 1.6
+    protected 'name' -> string (6) "My car"
+    protected 'year' -> null
+    private 'id' -> integer 75
+)
+```
+
+Filling model properties from native array:
+
+```php
+$rawData = [
+    'id' => 75,
+    'name' => 'My car',
+    'ENGINE_VOLUME' => 1.6, // camelCase/dash_case + case insensitivity example
+];
+$car = new Car();
+$car->fillFromArray($rawData);
+```
+```
+Dump:
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ $car                                                                         │
+└──────────────────────────────────────────────────────────────────────────────┘
+Examples\Module\CarModule\Model\Car\Car (7) (
+    protected 'brand' -> null
+    protected 'brandId' -> null
+    protected 'color' -> null
+    protected 'engineVolume' -> double 1.6
+    protected 'name' -> string (6) "My car"
+    protected 'year' -> null
+    private 'id' -> integer 75
+)
+```
+
+Setting properties manually:
+
+```php
+$car = new Car();
+$car->id = 75;
+$car->engineVolume = 1.6;
+```
+```
+Dump:
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ $car                                                                         │
+└──────────────────────────────────────────────────────────────────────────────┘
+Examples\Module\CarModule\Model\Car\Car (7) (
+    protected 'brand' -> null
+    protected 'brandId' -> null
+    protected 'color' -> null
+    protected 'engineVolume' -> double 1.6
+    protected 'name' -> null
+    protected 'year' -> null
+    private 'id' -> integer 75
+)
+```
+
+Access to property name is dash_case/camelCase insensitive:
+
+```php
+$car->engineVolume = 1.6;
+// is the same as
+$car->engine_volume = 1.6;
+```
+This is very very usefull, when we filled model properties from array with keys in dash_case format and when properties are in camelCase format. Properties are also case insensitive:
+
+```php
+$car->engineVolume = 1.6;
+// is the same as
+$car->eNgInEvOlUmE = 1.6;
+// and is the same as
+$car->eNgInE_vOlUmE = 1.6;
+```
+Property change can be also executed via setter (all previous examples was translated to setter methods)
+
+```php
+$car->setEngineVolume(1.6);
+```
+
+### How to get model properties
+
+Model properties are accessible directly, if getter for concrete property is defined. Access is similary as in previous examples and is also camelCase/dashCase + case insensitive.
+
+```php
+$value = $car->engineVolume;
+// is the same as
+$value = $car->engine_volume;
+// and is the same as
+$value = $car->getEngineVolume();
+```
+
+### Special constant for working with collections
+
+Every model can be converted to associated collection. For this functionality must be defined special constant `COLLECTION_CLASS`. Value of this constant is collection class name, which is default for this model. This collection can have extra functionality for data binding and manipulation with models (see [Models collections](modles-collections.md)). Example:
+
+```php
+const COLLECTION_CLASS = Cars::class;
+```
+
+### How to convert models
+
+Model can be converted to some other types. This is usefull, when you need e.g. get model as raw data or as native array.
+
+#### Invoking models
+
+First usefull method is `__invoke()`. This magic method allows calling model as function. It returns properties as array or as stdClass, but this method **ignores private properties**. 
+
+```php
+$car = new Car();
+$car->name = 'My car';
+$valueAsArray = $car();
+$valueAsObject = $car(true);
+```
+```
+Dump:
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ $valueAsArray                                                                │
+└──────────────────────────────────────────────────────────────────────────────┘
+array (6) [
+    'brand' => null
+    'brandId' => null
+    'color' => null
+    'engineVolume' => null
+    'name' => string (6) "My car"
+    'year' => null
+]
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ $valueAsObject                                                               │
+└──────────────────────────────────────────────────────────────────────────────┘
+stdClass (6) (
+    public 'brand' -> null
+    public 'brandId' -> null
+    public 'color' -> null
+    public 'engineVolume' -> null
+    public 'name' -> string (6) "My car"
+    public 'year' -> null
+)
+```will be converted
+Ignoring properties is also supported:
+
+```php
+$car = new Car();
+$car->name = 'My car';
+$valueAsArray = $car(false, ['color', 'year', 'engineVolume']);
+$valueAsObject = $car(true, ['color', 'year', 'engineVolume']);
+```
+```
+Dump:
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ $valueAsArray                                                                │
+└──────────────────────────────────────────────────────────────────────────────┘
+array (3) [
+    'brand' => null
+    'brandId' => null
+    'name' => string (6) "My car"
+]
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ $valueAsObject                                                               │
+└──────────────────────────────────────────────────────────────────────────────┘
+stdClass (3) (
+    public 'brand' -> null
+    public 'brandId' -> null
+    public 'name' -> string (6) "My car"
+)
+```
+
+#### Converting model to array or stdClass
+
+Method `getAsArray()` and `getAsStdClass()` returns similar output as `__invoke()` method, but we can define, whether property names will be converted to camel_case format (camelCase format is predefined for model property names) and we can also ignore properties, which are not scalar values (this is required for some cases, when defined property is recursive  to same model).
+
+```php
+$car = new Car();
+$car->name = 'My car';
+$valueAsArray1 = $car->getAsArray(false, ['color', 'year'], false);
+$valueAsArray2 = $car->getAsArray(true, ['color', 'year'], false);
+$valueAsObject1 = $car->getAsStdClass(false, ['color', 'year'], false);
+$valueAsObject2 = $car->getAsStdClass(true, ['color', 'year'], false);
+```
+```
+Dump:
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ $valueAsArray1                                                               │
+└──────────────────────────────────────────────────────────────────────────────┘
+array (4) [
+    'brand' => null
+    'brandId' => null
+    'engineVolume' => null
+    'name' => string (6) "My car"
+]
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ $valueAsArray2                                                               │
+└──────────────────────────────────────────────────────────────────────────────┘
+array (4) [
+    'brand' => null
+    'brand_id' => null
+    'engine_volume' => null
+    'name' => string (6) "My car"
+]
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ $valueAsObject1                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+stdClass (4) (
+    public 'brand' -> null
+    public 'brandId' -> null
+    public 'engineVolume' -> null
+    public 'name' -> string (6) "My car"
+)
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ $valueAsObject2                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+stdClass (4) (
+    public 'brand' -> null
+    public 'brand_id' -> null
+    public 'engine_volume' -> null
+    public 'name' -> string (6) "My car"
+)
+```
+
+#### Converting model to collection
+
+Method `createAssociatedCollection()` creates a new collection by model constant `COLLECTION_CLASS` class name and appends source model to this collection. Also key in collection can be defined. This collection can have extra functionality for data binding and has special methods to manipulation with models (see [Models collections](modles-collections.md)). So we can add functionality only to collection and this functionality is accessible also for model(s). Trick is in conversion to collection, which has required functionality. Collection methods can be called then from model.
+
+
+```php
+$car = new Car();
+$car->name = 'My car';
+$collection1 = $car->getAsCollection();
+$collection2 = $car->getAsCollection('mySomeKey');
+```
+```
+Dump:
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ $collection1                                                                 │
+└──────────────────────────────────────────────────────────────────────────────┘
+Examples\Module\CarModule\Model\Car\Cars (1) (
+    public 0 -> Examples\Module\CarModule\Model\Car\Car (7) (
+        protected 'brand' -> null
+        protected 'brandId' -> null
+        protected 'color' -> null
+        protected 'engineVolume' -> null
+        protected 'name' -> string (6) "My car"
+        protected 'year' -> null
+        private 'id' -> null
+    )
+)
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ $collection2                                                                 │
+└──────────────────────────────────────────────────────────────────────────────┘
+Examples\Module\CarModule\Model\Car\Cars (1) (
+    public 'mySomeKey' -> Examples\Module\CarModule\Model\Car\Car (7) (
+        protected 'brand' -> null
+        protected 'brandId' -> null
+        protected 'color' -> null
+        protected 'engineVolume' -> null
+        protected 'name' -> string (6) "My car"
+        protected 'year' -> null
+        private 'id' -> null
+    )
+)
+```
+
+When we can only create empty collection (without placing model to collection), we can use:
+
+```php
+$car = new Car();
+$car->name = 'My car';
+$collection = $car->createAssociatedCollection();
+```
+```
+Dump:
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ $collection                                                                  │
+└──────────────────────────────────────────────────────────────────────────────┘
+Examples\Module\CarModule\Model\Car\Cars (0) ()
+```
+
+
+## Model class example
+
+```php
+<?php
+declare(strict_types=1);
+
+namespace Examples\Module\CarModule\Model\Car;
+
+use Examples\Module\CarModule\Model\CarBrand\CarBrand;
+use ha\Internal\DefaultClass\Model\ModelDefaultAbstract;
+
 /**
- * Model Edition.
- *
- * This model can be collected in collection Editions with child type checking functionality.
- *
+ * Model Car.
+ * This model can be collected in collection Cars with child type checking functionality.
  * @property int $id
+ * @property string $name
+ * @property int $brandId
+ * @property CarBrand $brand
+ * @property float $engineVolume
+ * @property string $color
  * @property int $year
- * @property int $month
- * @property int $pagesCount
  */
-class Edition extends ModelDefaultAbstract
+class Car extends ModelDefaultAbstract
 {
-    /** Associated collection class. */ 
-    const COLLECTION_CLASS = Editions::class;
+    /** Associated collection class. */
+    const COLLECTION_CLASS = Cars::class;
+
+    /** @var CarBrand */
+    protected $brand;
+
+    /** @var int */
+    protected $brandId;
+
+    /** @var string */
+    protected $color;
+
+    /** @var float */
+    protected $engineVolume;
 
     /** @var int */
     protected $id;
-    
+
+    /** @var string */
+    protected $name;
+
     /** @var int */
     protected $year;
-    
-    /** @var int */
-    protected $month;
-    
-    /** @var int */
-    protected $pagesCount;
-    
+
+    /**
+     * Property 'brand' getter.
+     * @return CarBrand
+     */
+    public function getBrand()
+    {
+        return $this->brand;
+    }
+
+    /**
+     * Property 'brandId' getter.
+     * @return int
+     */
+    public function getBrandId()
+    {
+        return $this->brandId;
+    }
+
+    /**
+     * Property 'color' getter.
+     * @return string
+     */
+    public function getColor()
+    {
+        return $this->color;
+    }
+
+    /**
+     * Property 'engineVolume' getter.
+     * @return float
+     */
+    public function getEngineVolume()
+    {
+        return $this->engineVolume;
+    }
+
     /**
      * Property 'id' getter.
-     *
      * @return int
      */
     public function getId()
     {
         return $this->id;
     }
-    
+
     /**
-     * Property 'id' (un)setter.
-     *
-     * @param int $id
-     *
-     * @return Edition
+     * Property 'name' getter.
+     * @return string
      */
-    public function setId(int $id = null): Edition
+    public function getName()
     {
-        $this->id = $id;
-        return $this;
+        return $this->name;
     }
 
     /**
-     * Property 'id' isset checker.
-     *
-     * @return bool
-     */
-    public function hasId(): bool
-    {
-        return isset($this->id);
-    }    
-
-    /**
      * Property 'year' getter.
-     *
      * @return int
      */
     public function getYear()
     {
         return $this->year;
     }
-    
+
     /**
-     * Property 'year' (un)setter.
-     *
-     * @param int $year
-     *
-     * @return Edition
+     * Property 'brand' isset checker.
+     * @return bool
      */
-    public function setYear(int $year = null): Edition
+    public function hasBrand(): bool
     {
-        $this->year = $year;
-        return $this;
+        return isset($this->brand);
+    }
+
+    /**
+     * Property 'brandId' isset checker.
+     * @return bool
+     */
+    public function hasBrandId(): bool
+    {
+        return isset($this->brandId);
+    }
+
+    /**
+     * Property 'color' isset checker.
+     * @return bool
+     */
+    public function hasColor(): bool
+    {
+        return isset($this->color);
+    }
+
+    /**
+     * Property 'engineVolume' isset checker.
+     * @return bool
+     */
+    public function hasEngineVolume(): bool
+    {
+        return isset($this->engineVolume);
+    }
+
+    /**
+     * Property 'id' isset checker.
+     * @return bool
+     */
+    public function hasId(): bool
+    {
+        return isset($this->id);
+    }
+
+    /**
+     * Property 'name' isset checker.
+     * @return bool
+     */
+    public function hasName(): bool
+    {
+        return isset($this->name);
     }
 
     /**
      * Property 'year' isset checker.
-     *
      * @return bool
      */
     public function hasYear(): bool
     {
         return isset($this->year);
-    }    
+    }
 
     /**
-     * Property 'month' getter.
+     * Property 'brand' (un)setter.
      *
-     * @return int
+     * @param CarBrand $brand
+     *
+     * @return Car
      */
-    public function getMonth()
+    public function setBrand(CarBrand $brand = null): Car
     {
-        return $this->month;
-    }
-    
-    /**
-     * Property 'month' (un)setter.
-     *
-     * @param int $month
-     *
-     * @return Edition
-     */
-    public function setMonth(int $month = null): Edition
-    {
-        $this->month = $month;
+        $this->brand = $brand;
         return $this;
     }
 
     /**
-     * Property 'month' isset checker.
+     * Property 'brandId' (un)setter.
      *
-     * @return bool
+     * @param int $brandId
+     *
+     * @return Car
      */
-    public function hasMonth(): bool
+    public function setBrandId(int $brandId = null): Car
     {
-        return isset($this->month);
-    }    
-
-    /**
-     * Property 'pagesCount' getter.
-     *
-     * @return int
-     */
-    public function getPagesCount()
-    {
-        return $this->pagesCount;
-    }
-    
-    /**
-     * Property 'pagesCount' (un)setter.
-     *
-     * @param int $pagesCount
-     *
-     * @return Edition
-     */
-    public function setPagesCount(int $pagesCount = null): Edition
-    {
-        $this->pagesCount = $pagesCount;
+        $this->brandId = $brandId;
         return $this;
     }
 
     /**
-     * Property 'pagesCount' isset checker.
+     * Property 'color' (un)setter.
      *
-     * @return bool
+     * @param string $color
+     *
+     * @return Car
      */
-    public function hasPagesCount(): bool
+    public function setColor(string $color = null): Car
     {
-        return isset($this->pagesCount);
-    }    
-    
+        $this->color = $color;
+        return $this;
+    }
+
+    /**
+     * Property 'engineVolume' (un)setter.
+     *
+     * @param float $engineVolume
+     *
+     * @return Car
+     */
+    public function setEngineVolume(float $engineVolume = null): Car
+    {
+        $this->engineVolume = $engineVolume;
+        return $this;
+    }
+
+    /**
+     * Property 'id' (un)setter.
+     *
+     * @param int $id
+     *
+     * @return Car
+     */
+    public function setId(int $id = null): Car
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    /**
+     * Property 'name' (un)setter.
+     *
+     * @param string $name
+     *
+     * @return Car
+     */
+    public function setName(string $name = null): Car
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    /**
+     * Property 'year' (un)setter.
+     *
+     * @param int $year
+     *
+     * @return Car
+     */
+    public function setYear(int $year = null): Car
+    {
+        $this->year = $year;
+        return $this;
+    }
+
 }
 ```
 
@@ -200,186 +608,22 @@ Note: getters, setters and checkers can be defined in your IDE via templates or 
 
 **Setter:**
 
-`public function setMyVariable(int $value = null): Edition`
+`public function setEngineVolume(float $engineVolume = null): Car`
 
 Name is constructed as *set* + *{propertyName}*. Argument is always typed (e.g. `int $id`) - this provides full protection for input. Default value is `NULL` - this provides reset property functionality, when is called `$model-> id = null;`. Last step is defining return value. This must be `void` or model class name (when we returning `$this` for method chaining).
 
 **Getter:**
 
-`public function getPagesCount()`
+`public function getEngineVolume()`
 
 Name is constructed as *get* + *{propertyName}*. Return type is not defined, return value can be `NULL` or of type defined in setter.
 
 **Checker** (This method checks whether value is set or is `NULL`):
 
-`public function hasPagesCount(): bool`
+`public function hasEngineVolume(): bool`
 
 Name is constructed as *has* + *{propertyName}*. Method returns always bool value, return type is therefore always defined. Checkers are not required, but are nice. Functionality is the same as `isset($model->id)` or `is_null($model->id)`.
 
 **Other methods**
 
 We can also add other methods (staregy setter for IO operations, methods for using strategies, etc.).
-
-
-## Other usefull model methods
-
-### fillFromArray() method - fill properties from an array
-
-Model properties can be automatically filled from native php array:
-
-Schema:
-
-```php
-    /**
-     * Auto set properties from associative key-value array (array key are property names).
-     *
-     * @param array $data
-     */
-    public function fillFromArray(array $data): void;
-```
-
-Example:
-
-```php
-$modelData = [
-    'id' => 124,
-    'year' => 124,
-];
-$model = new Edition();
-$model->fillFromArray($modelData);
-```
-
-### getAsArray() method - convert model to native php array
-
-Model can be returned as native array.
-
-Schema:
-
-```php
-    /**
-     * Get model as native array.
-     *
-     * @param bool $keysInUnderscoredFormat Whether property names will be converted to underscore format.
-     * @param array $excludeKeys List of keys to exclude.
-     * @param bool $onlyNullOrScalarValues Whether will be objects and arrays ignored.
-     *
-     * @return array
-     */
-    public function getAsArray(bool $keysInUnderscoredFormat = false, array $excludeKeys = [], bool $onlyNullOrScalarValues = false) : array;
-```
-Examples:
-
-```php
-$modelData = [
-    'id' => 124,
-    'year' => 124,
-];
-$model = new Edition();
-$model->fillFromArray($modelData);
-
-// get as array (default):
-$modelData = $model->getAsArray();
-/* 
-RESULT:
-$modelData = [
-    'id' => 124,
-    'year' => 124,
-    'month' => null,
-    'pagesCount' => null,
-];
-*/
-
-// get as array and convert properties to dash_case:
-$modelData = $model->getAsArray(true);
-/* 
-RESULT:
-$modelData = [
-    'id' => 124,
-    'year' => 124,
-    'month' => null,
-    'pages_count' => null,
-];
-*/
-
-// get as array and exclude fields [year, month]:
-$modelData = $model->getAsArray(false, ['year', 'month']);
-/* 
-RESULT:
-$modelData = [
-    'id' => 124,
-    'pages_count' => null,
-];
-*/
-```
-
-### getAsStdClass() method - convert model to stdClass
-
-The same functionality as in `getAsArray()` method, but return value is `stdClass`.
-
-
-
-### __invoke() method - convert model to native php array or stdClass via magic method
-
-Model can be returned as native array.
-
-Schema:
-
-```php
-    /**
-     * @param bool $asObject Return as stdClass
-     * @param string[] $excludeKeys List of keys to exclude
-     *
-     * @return array|stdClass
-     */
-    public function __invoke(bool $asObject = false, array $excludeKeys = []);
-```
-Examples:
-
-```php
-$model = new Edition();
-$model->id = 124;
-
-// invoke (default):
-$modelData = $model();
-/* 
-RESULT:
-$modelData = [
-    'id' => 124,
-    'year' => null,
-    'month' => null,
-    'pagesCount' => null,
-];
-*/
-
-// invoke exclude fields [year, month]:
-$modelData = $model(false, ['year', 'month']);
-/* 
-RESULT:
-$modelData = [
-    'id' => 124,
-    'pages_count' => null,
-];
-*/
-```
-
-
-### bindRelations() method - binding data to model by references
-
-Models collections have this functionality: Binding submodels to model by references. We can add binding methods to assocciated collection and then we can call this method `$model->bindRelations([ ... ])` on our model. This method converts model to associated models collection and then are called binding methods on this collection. So collection methods are accessible also for model.
-
-Schema:
-
-```php
-    /**
-     * Bind relations.
-     *
-     * This creates new models collection in background, appends model to this collection and call "bindRelations"
-     * method on this collection.
-     *
-     * @param string[] $list List of method names in collection
-     *
-     * @return mixed
-     */
-    public function bindRelations(array $list);
-
-```
