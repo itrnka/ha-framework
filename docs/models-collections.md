@@ -10,16 +10,24 @@ Collection in *ha* framework is native PHP array wrapped with extra usefull func
 
 ### Collections in *ha* framework are divided to two main types:
 
-- [objects collections](#objects-collections) - collections of objects which implements the same interface
-- [scalar values collections](#collections-for-scalar-values) - collections of values of the same type
+- [objects collections](#objects-collections) - collections of models which implements the same interface
+- [scalar values collections](#collections-for-scalar-values) - collections of scalar values of the same type
+
+### About collections
+
+We can use our collection in many cases as native array, e.g. `foreach`, access by index `$coll[]`, `$coll['x']`, etc. Every collection also has some extra functionality described in this chapter. Some functionality was inspired by other popular frameworks.
+
+Collection must implement interface `ha\Internal\DefaultClass\Model\ModelCollection` and so also implements in background standard interfaces `Iterator`, `ArrayAccess`, `SeekableIterator`, `Serializable`, and `Countable`. Described functionality in this document is provided by model collection abstract `ha\Internal\DefaultClass\Model\ModelCollection\ModelCollectionDefaultAbstract`, so collection must be extended from this abstract class. But you can also use your custom implementation, if you want, only interface must be implemented.
 
 ## Objects collections
 
+
+
 ### Working with collections
 
-Collection implements some interfaces as array, so we can use our collection in many cases as native array, e.g. `foreach`, access by index `$coll[]`, `$coll['x']`, etc. Every collection also has some extra functionality described in this chapter. Some functionality was inspired by other popular frameworks.
 
-### Converting collections to array
+
+#### Converting collections to array
 
 We can use magic method `__invoke()`, which allows calling collection as function. It returns array with items as array or as stdClass. 
 
@@ -64,7 +72,7 @@ array (2) [
 ]
 ```
 
-### Converting collections to (JSON) string
+#### Converting collections to (JSON) string
 
 Magic method `__toString()` allows converting collection to string. This string is in JSON format. Usefull for logging, dumping data, etc.
 
@@ -86,7 +94,7 @@ Dump:
 string (53) "[{"id":20,"name":"Volvo"},{"id":94,"name":"Peugeot"}]"
 ```
 
-### How to determine, whether collection contains item with concrete property value
+#### How to determine, whether collection contains item with concrete property value
 
 Method `contains()` is usefull to determining, whether collection contains item, which property value is some concrete value. For each item in collection is compared property value and entered value in strict mode.
 
@@ -114,7 +122,7 @@ boolean false
 
 ```
 
-### How to extract some property from items
+#### How to extract some property from items
 
 Method `extract()` can be used, when we need to get set of values from items property. From each item in collection is exctracted property value and is collected in returned array. Values could be returned as unique (removed duplicitated values) and limit for values in returned array is also supported.
 
@@ -148,7 +156,7 @@ array (2) [
 
 ```
 
-### How to filter items in collection
+#### How to filter items in collection
 
 Note: this collection is used in filter examples:
 
@@ -258,7 +266,7 @@ Examples\Module\CarModule\Model\CarBrand\CarBrands (1) (
     )
 )
 ```
-### How to get first item from collection
+#### How to get first item from collection
 
 Method `first()` provides this funtionality. If collection is empty, a *NotFoundException* is throwed. Therefore *try-catch* block is required.
 
@@ -279,7 +287,7 @@ Examples\Module\CarModule\Model\CarBrand\CarBrands (1) (
 )
 ```
 
-### How to determine, whether collection is empty
+#### How to determine, whether collection is empty
 
 Method `isEmpty()` provides this funtionality. If collection is empty, method return `true`, otherwise `false` is returned. 
 
@@ -295,7 +303,7 @@ Dump:
 boolean false
 ```
 
-### How to create empty copy of collection
+#### How to create empty copy of collection
 
 Method `newSelf()` creates empty collection of the same type as source collection. Factory call is therefore not required in some cases and also `new` keyword. 
 
@@ -303,22 +311,22 @@ Method `newSelf()` creates empty collection of the same type as source collectio
 $emptyCollection = $carBrands->newSelf();
 ```
 
-### How to split collection by value
+#### How to split collection by value
 `splitToGroups()`
 
-### How to change items index in collection by item property value
+#### How to change items index in collection by item property value
 `remap()`
 
 > Please use only primary/unique keys as property name for index in this case. Duplications will be overwriten.
 
-### How to modify collection items
+#### How to modify collection items
 
 
 `modify()`
 `modifyItemPropertyValue()`
 
 
-### Usefull methods for services
+#### Usefull methods for services
 
 Collection is used in many cases in services, when we converting data recieved from datasources to local models. Very usefull are getters and setters for some metadata, data about pagination and methods to determine name of datasource, when collection was created. Here is list of supported getters and setters:
 
