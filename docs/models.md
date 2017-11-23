@@ -221,7 +221,7 @@ stdClass (3) (
 
 #### Converting model to array or stdClass
 
-Method `getAsArray()` and `getAsStdClass()` returns similar output as `__invoke()` method, but we can define, whether property names will be converted to camel_case format (camelCase format is predefined for model property names) and we can also ignore properties, which are not scalar values (this is required for some cases, when defined property is recursive  to same model).
+Method `getAsArray()` and `getAsStdClass()` returns similar output as `__invoke()` method, but we can define, whether property names will be converted to dash_case format (camelCase format is predefined for model property names) and we can also ignore properties, which are not scalar values (this is required for some cases, when defined property is recursive  to same model).
 
 ```php
 $car = new Car();
