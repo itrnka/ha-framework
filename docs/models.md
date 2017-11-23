@@ -6,14 +6,14 @@ This principe is very usefull in cases, when we use multiple storages for the sa
 
 When we execute read operation on datasource, read method in service transforms loaded row into our model, write method in service converts model to datasource row and writes it.
 
-Model in *ha* framework is extended from abstract `ha\Internal\DefaultClass\Model\ModelDefaultAbstract` (and so implements interface `ha\Internal\DefaultClass\Model\ModelDefaultAbstract\Model`). This provides default model functionality.
+Model in *ha* framework is extended from abstract `ha\Internal\DefaultClass\Model\ModelDefaultAbstract` (and so implements interface `ha\Internal\DefaultClass\Model\ModelDefaultAbstract\Model`). This provides default model functionality. Extending is recommended, but you can use your custom impleementation by interface (but next complex functionality described in this document will be not implemented automatically).
 
 Note: ORM based functionality for models is wrong way. ORM is very slow and is directly and inseparably depended on concrete datasource instance. Principe used for models in *ha* framework is datasource independent and is very flexible. So models are absolutely separated from datasources and can be used in future for other datasources without code changes. Also datasource can be removed from application without model changes. This is very important for code reusability. The same models can be used accross multiple projects.
 
 
 ## Working with models
 
-**Note: examples used in this chapter are based on [class example](#model-class-example) at end of this document.**
+**Note: examples used in this chapter are based on [model class example](#model-class-example) at end of this document.**
 
 ### How model properties works
 
@@ -27,7 +27,7 @@ $model->id = 5;
 $model->setId(5);
 ```
 
-Public access to model properties is therefore depenent on defining getters/setters and can be combined, e.g. when we define only getter, property is read only from public scope. Please see section *Model class example* to better understanding at end of this document.
+Public access to model properties is therefore depenent on defining getters/setters and can be combined, e.g. when we define only getter, property is read only from public scope. Please see section [Model class example](#model-class-example) to better understanding at end of this document.
 
 Please use camelCase format for model properties, some optional functionality is based on camelCase format.
 
@@ -602,9 +602,9 @@ As we can see, model uses protected properties. In class anotation are defined t
 
 Very important and required is constant `COLLECTION_CLASS`. This defines which class name is used, when we converting model to models collection and when is appended model to collection. Model and collection is so protected to other types (e.g. integer could not be added to collection and many developer errors are prevented with this principe). This is typehinting implementation.
 
-Next step is defining our protected properties and access methods for this properties. Access methods must be in camelCase format. Dash_case format is not supported.
+Next step is defining our *protected* or *private* properties and access methods for this properties. Private properties are ignored in moel conversion methods. Access methods must be decalred in camelCase format. Dash_case format is not supported.
 
-Note: getters, setters and checkers can be defined in your IDE via templates or live templates and usage is then very fast. E.g. in *PHP Storm* try shorcut `ALT` + `INSERT` in class body. Template in IDE editors can be edited. In this case, we define only protected properties and then we apply templates for generating access methods by pressing shortcut (usefull templates will be added in future to separated repository).
+Note: getters, setters and checkers can be defined in your IDE via templates or live templates and usage is then very fast. E.g. in *PHP Storm* try shorcut `ALT` + `INSERT` in class body. Template in IDE editors can be edited. In this case, we define only properties and then we apply templates for generating access methods by pressing shortcut (usefull templates will be added in future to separated repository).
 
 **Setter:**
 
@@ -622,8 +622,8 @@ Name is constructed as *get* + *{propertyName}*. Return type is not defined, ret
 
 `public function hasEngineVolume(): bool`
 
-Name is constructed as *has* + *{propertyName}*. Method returns always bool value, return type is therefore always defined. Checkers are not required, but are nice. Functionality is the same as `isset($model->id)` or `is_null($model->id)`.
+Name is constructed as *has* + *{propertyName}*. Method returns always bool value, return type is therefore always defined. Checkers are not required, but are nice. Functionality is the same as `isset($model->id)` or `is_null($model->id)`. This method is optional, but is very usefull.
 
 **Other methods**
 
-We can also add other methods (staregy setter for IO operations, methods for using strategies, etc.).
+We can also add other methods (strategy setter for IO operations, methods for using strategies, etc.), but this is already special implementation outside default model funcionality in framework.
