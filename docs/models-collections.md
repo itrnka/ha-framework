@@ -3,9 +3,9 @@
 Collection in *ha* framework is native PHP array wrapped with extra usefull functionality, which speeds code writing and code reusability. Collection also provides better data handling and data validation. This functionality is divided to:
 
 - **data type checking**: before appending value to collection is validated, whether new value implements an interface defined in collection as allowed interface
-- **data transformation**: every collection has usefull methods to manipulating properties values on self items
+- **data transformation and modification**: every collection has usefull methods to manipulating properties values on self items
 - **data filtering**: every collection has usefull methods to extracting self items from collection by properties values of this items
-- **access to native data**: every collection can be converted to native array
+- **access to native data**: every collection can be converted to native array or only some properties from items can be extracted (e.g. get only *id* property as array from items)
 - **data binding**: we can add extra methods - most often for data binding independent from datasource, but you can write some other custom logic for items
 
 ### Collections in *ha* framework are divided to two main types:
