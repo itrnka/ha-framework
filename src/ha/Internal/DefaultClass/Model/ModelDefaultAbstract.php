@@ -1,5 +1,5 @@
 <?php
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace ha\Internal\DefaultClass\Model;
 
@@ -91,18 +91,20 @@ abstract class ModelDefaultAbstract implements Model
     }
 
     /** @inheritdoc */
-    public function bindRelations(array $list)
+    public function createAssociatedCollection(): ModelCollection
     {
-        $collection = (get_class($this));
-        if (!defined("{$collection}::COLLECTION_CLASS")) {
-            throw new \ErrorException("Class '{$collection}' has not defined constant 'COLLECTION_CLASS'");
+        //        return new class extends ModelCollectionDefaultAbstract {
+        //
+        //
+        //        };
+        $selfClass = (get_class($this));
+        if (!defined("{$selfClass}::COLLECTION_CLASS")) {
+            throw new \ErrorException("Class '{$selfClass}' has not defined constant 'COLLECTION_CLASS'");
         }
-        $collection = $collection::COLLECTION_CLASS;
+        $collectionClass = $selfClass::COLLECTION_CLASS;
         /** @var ModelCollection $collection */
-        $collection = new $collection;
-        $collection[] = $this;
-        $collection->bindRelations($list);
-        unset($collection);
+        $collection = new $collectionClass;
+        return $collection;
     }
 
     /** @inheritdoc */
@@ -146,6 +148,25 @@ abstract class ModelDefaultAbstract implements Model
     }
 
     /** @inheritdoc */
+    public function getAsCollection($keyInCollection = null): ModelCollection
+    {
+        $collection = $this->createAssociatedCollection();
+        if (isset($keyInCollection)) {
+            if (!is_string($keyInCollection) && !is_int($keyInCollection)) {
+                throw new \TypeError(
+                    get_class($this) . '->' . __FUNCTION__ . '() expects $keyInCollection to be string or integer, '
+                    . gettype($keyInCollection) . ' given'
+                );
+            }
+            $collection[$keyInCollection] = $this;
+        }
+        else {
+            $collection[] = $this;
+        }
+        return $collection;
+    }
+
+    /** @inheritdoc */
     public function getAsStdClass(bool $keysInUnderscoredFormat = false, array $excludeKeys = [],
         bool $onlyNullOrScalarValues = false
     ): \stdClass {
@@ -175,7 +196,15 @@ abstract class ModelDefaultAbstract implements Model
         return $this->getAsArrayHelper($returnValues, $keysInUnderscoredFormat, true);
     }
 
-    /** @inheritdoc */
+    /**
+     * Convert property name to getter.
+     * CamelCase and underscored format will be used, property name is case insensitive.
+     *
+     * @param string $property
+     *
+     * @static
+     * @return string
+     */
     public static function propertyToGetter(string $property): string
     {
         if (!isset(self::$getters[$property])) {
@@ -184,34 +213,21 @@ abstract class ModelDefaultAbstract implements Model
         return self::$getters[$property];
     }
 
-    /** @inheritdoc */
+    /**
+     * Convert property name to setter.
+     * CamelCase and underscored format will be used, property name is case insensitive.
+     *
+     * @param string $property
+     *
+     * @static
+     * @return string
+     */
     public static function propertyToSetter(string $property): string
     {
         if (!isset(self::$setters[$property])) {
             self::$setters[$property] = 'set' . ucfirst(self::underscoredToProperty($property));
         }
         return self::$setters[$property];
-    }
-
-    /** @inheritdoc */
-    public static function propertyToUnderscored(string $property): string
-    {
-        if (!isset(self::$propertyToUnderscored[$property])) {
-            preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9]|[_][A-Za-z]+)|[A-Za-z][a-z0-9]+)!', $property, $matches);
-            $ret = $matches[0];
-            $ret = strtolower(implode('_', $ret));
-            self::$propertyToUnderscored[$property] = $ret;
-        }
-        return self::$propertyToUnderscored[$property];
-    }
-
-    /** @inheritdoc */
-    public static function underscoredToProperty(string $property): string
-    {
-        if (!isset(self::$underscoredToProperty[$property])) {
-            self::$underscoredToProperty[$property] = str_replace('_', '', lcfirst(ucwords($property, '_')));
-        }
-        return self::$underscoredToProperty[$property];
     }
 
     /**
@@ -275,6 +291,41 @@ abstract class ModelDefaultAbstract implements Model
     {
         // TODO apply cache
         return strtolower(preg_replace('/_/', '', $key));
+    }
+
+    /**
+     * Get property name in underscored format.
+     *
+     * @param string $property
+     *
+     * @static
+     * @return string
+     */
+    private static function propertyToUnderscored(string $property): string
+    {
+        if (!isset(self::$propertyToUnderscored[$property])) {
+            preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9]|[_][A-Za-z]+)|[A-Za-z][a-z0-9]+)!', $property, $matches);
+            $ret = $matches[0];
+            $ret = strtolower(implode('_', $ret));
+            self::$propertyToUnderscored[$property] = $ret;
+        }
+        return self::$propertyToUnderscored[$property];
+    }
+
+    /**
+     * Get property name in CamelCase format.
+     *
+     * @param string $property
+     *
+     * @static
+     * @return string
+     */
+    private static function underscoredToProperty(string $property): string
+    {
+        if (!isset(self::$underscoredToProperty[$property])) {
+            self::$underscoredToProperty[$property] = str_replace('_', '', lcfirst(ucwords($property, '_')));
+        }
+        return self::$underscoredToProperty[$property];
     }
 
 }
