@@ -602,7 +602,7 @@ As we can see, model uses protected or private properties. In class anotation ar
 
 Very important and required is constant `COLLECTION_CLASS`. This defines which class name is used, when we converting model to models collection and when is appended model to collection. Model and collection is so protected to other types (e.g. integer could not be added to collection and many developer errors are prevented with this principe). This is typehinting implementation.
 
-Next step is defining our *protected* or *private* properties and access methods for this properties (getters, setters and checkers). Access methods must be declared in camelCase format. Dash_case format is not supported.
+Next step after defining our *protected* or *private* properties is defining access methods for this properties (getters, setters and checkers). Access methods must be entered in camelCase format. Dash_case format is not supported.
 
 > Note: getters, setters and checkers can be defined in your IDE via templates or live templates and usage is then very fast. E.g. in *PHP Storm* try shorcut `ALT` + `INSERT` in class body. Template in IDE editors can be edited. In this case, we define only properties and then we apply templates for generating access methods by pressing shortcut (usefull templates will be added in future to separated repository).
 
