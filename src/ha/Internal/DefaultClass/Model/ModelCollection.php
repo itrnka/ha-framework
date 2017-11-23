@@ -1,29 +1,47 @@
 <?php
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace ha\Internal\DefaultClass\Model;
 
-
-interface ModelCollection extends \Iterator, /*\Traversable,*/ \ArrayAccess, \SeekableIterator, \Serializable, \Countable
+interface ModelCollection extends \Iterator, /*\Traversable,*/
+    \ArrayAccess, \SeekableIterator, \Serializable, \Countable
 {
 
     /**
-     * Create new self instance.
+     * Get as raw data as array.
      *
-     * @param array $array
+     * @param bool $itemAsObject Return items as object (=true) or as array (=false)
      *
-     * @return $this
+     * @return array
      */
-    public function newSelf(array $array = []);
+    public function __invoke(bool $itemAsObject = false): array;
 
     /**
-     * Returns copy of this collection without items for which the $function($item) returns true.
-     *
-     * @param \Closure $function function ($item, $key) : bool { ... }
-     *
-     * @return $this
+     * Get as string.
+     * @return string
      */
-    public function reject(\Closure $function);
+    public function __toString(): string;
+
+    /**
+     * Determine whether this collection contains object with $propertyName === $propertyValue.
+     *
+     * @param string $propertyName
+     * @param $propertyValue
+     *
+     * @return bool Property value found in collection item
+     */
+    public function contains(string $propertyName, $propertyValue): bool;
+
+    /**
+     * Extract property value from every item and return this extracted values as array.
+     *
+     * @param string $propertyName
+     * @param bool $unique
+     * @param int $limit
+     *
+     * @return array
+     */
+    public function extract(string $propertyName, bool $unique = true, int $limit = 0): array;
 
     /**
      * Returns copy of this collection with all items for which the $function($item) returns true.
@@ -34,6 +52,60 @@ interface ModelCollection extends \Iterator, /*\Traversable,*/ \ArrayAccess, \Se
      * @return $this
      */
     public function filter(\Closure $filter, int $limit = 0);
+
+    /**
+     * Get first child.
+     * @return mixed
+     */
+    public function first();
+
+    /**
+     * Returns meta data provided by service.
+     * @return int
+     */
+    public function getAffectedRows(): int;
+
+    /**
+     * Returns keys of this collection provided as simple native array.
+     * @return string[]|int[] Keys list
+     */
+    public function getKeys(): array;
+
+    /**
+     * Returns meta data provided by service.
+     * @return array
+     */
+    public function getMetaData(): array;
+
+    /**
+     * Returns meta data provided by service.
+     * @return int
+     */
+    public function getPageNumber(): int;
+
+    /**
+     * Returns meta data provided by service.
+     * @return int
+     */
+    public function getPerPageCount(): int;
+
+    /**
+     * Get name of instance creator (e.g. datasource driver name).
+     * @return string
+     */
+    public function getProviderName();
+
+    /**
+     * Returns meta data provided by service.
+     * @return int
+     */
+    public function getTotalCount(): int;
+
+    /**
+     * Determine whether this collection is empty (count = 0).
+     * @return bool Collection is empty
+     */
+    public function isEmpty(): bool;
 
     /**
      * Modify every item in collection by custom function.
@@ -55,28 +127,22 @@ interface ModelCollection extends \Iterator, /*\Traversable,*/ \ArrayAccess, \Se
     public function modifyItemPropertyValue(string $propertyName, $modifier);
 
     /**
-     * Determine whether this collection contains object with $propertyName === $propertyValue.
+     * Create new self instance.
      *
-     * @param string $propertyName
-     * @param $propertyValue
+     * @param array $array
      *
-     * @return bool Property value found in collection item
+     * @return $this
      */
-    public function contains(string $propertyName, $propertyValue) : bool;
+    public function newSelf(array $array = []);
 
     /**
-     * Returns keys of this collection provided as simple native array.
+     * Returns copy of this collection without items for which the $function($item) returns true.
      *
-     * @return array Keys list
-     */
-    public function getKeys() : array;
-
-    /**
-     * Determine whether this collection is empty (count = 0).
+     * @param \Closure $function function ($item, $key) : bool { ... }
      *
-     * @return bool Collection is empty
+     * @return $this
      */
-    public function isEmpty() : bool;
+    public function reject(\Closure $function);
 
     /**
      * Returns copy of this collection in which are keys provided as value from property $propertyName
@@ -89,6 +155,60 @@ interface ModelCollection extends \Iterator, /*\Traversable,*/ \ArrayAccess, \Se
     public function remap(string $propertyName);
 
     /**
+     * Set meta data provided by service.
+     *
+     * @param int $affectedRows
+     *
+     * @return $this
+     */
+    public function setAffectedRows(int $affectedRows);
+
+    /**
+     * Set meta data provided by service.
+     *
+     * @param array $metaData
+     *
+     * @return $this
+     */
+    public function setMetaData(array $metaData);
+
+    /**
+     * Set meta data provided by service.
+     *
+     * @param int $pageNumber
+     *
+     * @return $this
+     */
+    public function setPageNumber(int $pageNumber);
+
+    /**
+     * Set meta data provided by service.
+     *
+     * @param int $perPageCount
+     *
+     * @return $this
+     */
+    public function setPerPageCount(int $perPageCount);
+
+    /**
+     * Set meta data provided by service.
+     *
+     * @param string $providerName
+     *
+     * @return $this
+     */
+    public function setProviderName(string $providerName);
+
+    /**
+     * Set meta data provided by service.
+     *
+     * @param int $totalCount
+     *
+     * @return $this
+     */
+    public function setTotalCount(int $totalCount);
+
+    /**
      * Split this collection to arrays by property value.
      *
      * @param string $propertyName
@@ -96,7 +216,7 @@ interface ModelCollection extends \Iterator, /*\Traversable,*/ \ArrayAccess, \Se
      * @return array
      * @throws \TypeError When the value is not a string or integer
      */
-    public function splitToGroups(string $propertyName) : array;
+    public function splitToGroups(string $propertyName): array;
 
     /**
      * Returns copy of this collection with all items for which $propertyName=$propertyValue.
@@ -121,147 +241,14 @@ interface ModelCollection extends \Iterator, /*\Traversable,*/ \ArrayAccess, \Se
     public function whereIn(string $propertyName, array $propertyValues, int $limit = 0);
 
     /**
-     * Extract property value from every item and return this extracted values as array.
+     * Returns copy of this collection with all items for which $propertyName!=$propertyValue.
      *
      * @param string $propertyName
-     * @param bool $unique
+     * @param mixed $propertyValue
      * @param int $limit
      *
-     * @return array
-     */
-    public function extract(string $propertyName, bool $unique = true, int $limit = 0) : array;
-
-    /**
-     * Get first child.
-     *
-     * @return mixed
-     */
-    public function first();
-
-    /**
-     * Get as raw data as array.
-     *
-     * @param bool $itemAsObject Return items as object (=true) or as array (=false)
-     *
-     * @return array
-     */
-    public function __invoke(bool $itemAsObject = false) : array;
-
-    /**
-     * Get as string.
-     *
-     * @return string
-     */
-    public function __toString() : string;
-
-
-    /**
-     * Returns meta data provided by service.
-     *
-     * @return array
-     */
-    public function getMetaData() : array;
-
-
-    /**
-     * Set meta data provided by service.
-     *
-     * @param array $metaData
-     *
      * @return $this
      */
-    public function setMetaData(array $metaData);
-
-    /**
-     * Returns meta data provided by service.
-     *
-     * @return int
-     */
-    public function getPageNumber() : int;
-
-    /**
-     * Set meta data provided by service.
-     *
-     * @param int $pageNumber
-     *
-     * @return $this
-     */
-    public function setPageNumber(int $pageNumber);
-
-    /**
-     * Returns meta data provided by service.
-     *
-     * @return int
-     */
-    public function getTotalCount() : int;
-
-    /**
-     * Set meta data provided by service.
-     *
-     * @param int $totalCount
-     *
-     * @return $this
-     */
-    public function setTotalCount(int $totalCount);
-
-    /**
-     * Returns meta data provided by service.
-     *
-     * @return int
-     */
-    public function getPerPageCount() : int;
-
-    /**
-     * Set meta data provided by service.
-     *
-     * @param int $perPageCount
-     *
-     * @return $this
-     */
-    public function setPerPageCount(int $perPageCount);
-
-    /**
-     * Get name of instance creator (e.g. datasource driver name).
-     * @return string
-     */
-    public function getProviderName();
-
-    /**
-     * Set meta data provided by service.
-     *
-     * @param string $providerName
-     *
-     * @return $this
-     */
-    public function setProviderName(string $providerName);
-
-    /**
-     * Returns meta data provided by service.
-     *
-     * @return int
-     */
-    public function getAffectedRows() : int;
-
-    /**
-     * Set meta data provided by service.
-     *
-     * @param int $affectedRows
-     *
-     * @return $this
-     */
-    public function setAffectedRows(int $affectedRows);
-
-    /**
-     * Call list of methods for binding data.
-     *
-     * Cals $this->{$list[0]}, $this->{$list[1]}, ...
-     *
-     * @param string[] $list [method1, method2, ...]
-     *
-     * @return $this
-     *
-     * @throws \ErrorException
-     */
-    public function bindRelations(array $list);
+    public function whereNot(string $propertyName, $propertyValue, int $limit = 0);
 
 }
