@@ -6,9 +6,9 @@ This principe is very usefull in cases, when we use multiple storages for the sa
 
 When we execute read operation on datasource, read method in service transforms loaded row into our model, write method in service converts model to datasource row and writes it.
 
-Model in *ha* framework is extended from abstract `ha\Internal\DefaultClass\Model\ModelDefaultAbstract` (and so implements interface `ha\Internal\DefaultClass\Model\ModelDefaultAbstract\Model`). This provides default model functionality. Extending is recommended, but you can use your custom impleementation by interface (but next complex functionality described in this document will be not implemented automatically).
+Model in ha framework must impelemnt interface `ha\Internal\DefaultClass\Model\ModelDefaultAbstract\Model`. By default, recommended way is using models, which are extended from abstract `ha\Internal\DefaultClass\Model\ModelDefaultAbstract` (class implements required interface). This provides default model functionality. Extending is recommended, but you can use your custom implementation by interface (but next complex functionality described in this document will be not implemented automatically).
 
-Note: ORM based functionality for models is wrong way. ORM is very slow and is directly and inseparably depended on concrete datasource instance. Principe used for models in *ha* framework is datasource independent and is very flexible. So models are absolutely separated from datasources and can be used in future for other datasources without code changes. Also datasource can be removed from application without model changes. This is very important for code reusability. The same models can be used accross multiple projects.
+> Note: ORM based functionality for models is wrong way. ORM is very slow and is directly and inseparably depended on concrete datasource instance. Principe used for models in *ha* framework is datasource independent and is very flexible. So models are absolutely separated from datasources and can be used in future for other datasources without code changes. Also datasource can be removed from application without model changes. This is very important for code reusability. The same models can be used accross multiple projects.
 
 
 ## Working with models
@@ -29,7 +29,7 @@ $model->setId(5);
 
 Public access to model properties is therefore depenent on defining getters/setters and can be combined, e.g. when we define only getter, property is read only from public scope. Please see section [Model class example](#model-class-example) to better understanding at end of this document.
 
-Please use camelCase format for model properties, some optional functionality is based on camelCase format.
+Please use camelCase format for model property names, some optional functionality is based on camelCase format.
 
 
 ### How to set model properties
@@ -602,27 +602,43 @@ As we can see, model uses protected properties. In class anotation are defined t
 
 Very important and required is constant `COLLECTION_CLASS`. This defines which class name is used, when we converting model to models collection and when is appended model to collection. Model and collection is so protected to other types (e.g. integer could not be added to collection and many developer errors are prevented with this principe). This is typehinting implementation.
 
-Next step is defining our *protected* or *private* properties and access methods for this properties. Private properties are ignored in model conversion methods. Access methods must be declared in camelCase format. Dash_case format is not supported.
+Next step is defining our *protected* or *private* properties and access methods for this properties (getters, setters and checkers). Access methods must be declared in camelCase format. Dash_case format is not supported.
 
-Note: getters, setters and checkers can be defined in your IDE via templates or live templates and usage is then very fast. E.g. in *PHP Storm* try shorcut `ALT` + `INSERT` in class body. Template in IDE editors can be edited. In this case, we define only properties and then we apply templates for generating access methods by pressing shortcut (usefull templates will be added in future to separated repository).
+> Note: getters, setters and checkers can be defined in your IDE via templates or live templates and usage is then very fast. E.g. in *PHP Storm* try shorcut `ALT` + `INSERT` in class body. Template in IDE editors can be edited. In this case, we define only properties and then we apply templates for generating access methods by pressing shortcut (usefull templates will be added in future to separated repository).
+
+> Note 2: Private properties are ignored in model conversion methods (model to array, model to stdClass), only protected properties will be exported.
+
 
 **Setter:**
 
-`public function setEngineVolume(float $engineVolume = null): Car`
+```php
+public function setEngineVolume(float $engineVolume = null): Car
+```
 
-Name is constructed as *set* + *{propertyName}*. Argument is always typed (e.g. `int $id`) - this provides full protection for input. Default value is `NULL` - this provides reset property functionality, when is called `$model-> id = null;`. Last step is defining return value. This must be `void` or model class name (when we returning `$this` for method chaining).
+- name is constructed as *set* + *{propertyNameInCamelCaseFormat}*. 
+- argument is always typed (e.g. `int $id`), this provides full protection for input. 
+- default argument value is `NULL` (optional): default value will be `NULL`, this provides reset property functionality, when is called `$model-> id = null;`. 
+- return value type must be `void` or self model class name (when we returning `$this` for method chaining).
 
 **Getter:**
 
-`public function getEngineVolume()`
+```php
+public function getEngineVolume()
+```
 
-Name is constructed as *get* + *{propertyName}*. Return type is not defined, return value can be `NULL` or of type defined in setter.
+- name is constructed as *get* + *{propertyNameInCamelCaseFormat}*. 
+- return type is not defined, when return value can be `NULL` or of type defined in setter.
 
 **Checker** (This method checks whether value is set or is `NULL`):
 
-`public function hasEngineVolume(): bool`
+```php
+public function hasEngineVolume(): bool
+```
 
-Name is constructed as *has* + *{propertyName}*. Method returns always bool value, return type is therefore always defined. Checkers are not required, but are nice. Functionality is the same as `isset($model->id)` or `is_null($model->id)`. This method is optional, but is very usefull.
+- name is constructed as *has* + *{propertyNameInCamelCaseFormat}*. 
+- method returns always bool value, return type `bool` is therefore always defined. 
+
+> Checkers are not required, but are nice. Functionality is the same as `isset($model->id)` or `is_null($model->id)`. This method is so optional, but is very usefull.
 
 **Other methods**
 
