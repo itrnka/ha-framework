@@ -2,33 +2,58 @@
 
 ## What is module in *ha* framework
 
-**We can very simply say: module uses application services to some functionality and application service uses IO services to read/write data. IO services uses middleware to concrete CRUD operations. Service input or service output is representeed as model, models collection or scalar value. Complex of these instances is module, when these instances are in the same logic family. Module makes public access to some these instances. So we can see clear difference between module and middleware. At a first look is it often not clear. So module is set of services and models with public access via facade pattern, but without middleware - midddleware is outside module.**
+Module is a encapsulated system that provides some complex functionality. So we can use name "logic provider" for this application component. Access to functions can be provided via facade methods, or if you do not want use facade access, module can working as IoC container with services and as a factory for models. Very important functionality of module is hidding of most functionality from public scope. Access can only be public for the necessary functionality and is, by default, completely independent of data sources. The public scope does not need to know what source was used for our activity. We just want to read, write, delete or update some data and the way to do it is irrelevant outside the module.
 
-Module is facade to complex functionality family. Module also encapsulate complete functionality for some complex logic. When we have e.g. articles in system, module can be *ArticleModule* and here would be all about reading and writing articles: models (*Article, Articles, ArticleCategory, ArticleCategories, ...*), application services with bussines logic (e.g. verify ACL or something other and call IO service in background), IO services (transform input params to query and call concrete middleware driver), so full flow about articles. Other module can be e.g. *LanguageModule* and this module will have all about languages (all services and all models).
+Another very important module functionality is simple access to the module instance without requring dependency injections. Our application contains an IoC container with our modules and this container is directly accessible from the public scope. So we can call the module directly from any part of our code.
 
-Module instances can be called from controllers (reading or writing data). When request is mapped via router to concrete route, route will calls controller method an in this method we can use module method to accessing service.
+The last important feature of the module is strict separation of data rendering and processing of requests (HTTP requests or console commands).
 
-When we have e.g. e-commerce project, in module will be everything, what is required for e-commerce solution (services and models for products, products categories, etc.). 
+### Benefits
 
-**Idea:** separate universal logic from access type and rendering. E.g. website uses custom controllers and views, API uses custom controllers and views, mobile page uses custom controllers and views, some Angular app uses custom controllers and views, but logic is the same and is separated and encapsulated into module. This idea is very useful for projects, when we have different access method to the same functionality.
+*ha* framework is mainly designed with this idea and there are some great benefits:
 
-## What is not module
+- Each module can be used as a microservice at application level or as API.
+- Also our application can be used as a microservice.
+- Each module can be completely independent of other modules and can be removed or replaced in the future without large code changes.
+- Our application code is independent of data and we can simply add, replace or remove some data sources in a background, changes arise only in the hidden functionality of the module.
+- The application can work for many years without changes, changes will only be at middleware level. This is useful for unpredictable future changes: new middleware versions in future, better technologies in future, transformation to cloud technologies in future, etc.
+- We can very easly add some subsystems to our application without large code changes, when in our application performance issues will be occured in future.
+- Our full application can be used as microservice.
 
-Module is not driver, module does not map request to functionality. Module is complete and specific functionality in some complex flow independent from middleware and access metods.
+### Module usage
+In most cases, modules are used in controllers (HTTP access) or in console commands (shell access), e.g. for reading and writing models. Modules can also be used in other modules, but the use of cross modules is highly not recommended - we want to keep loose connections between the application components. In special cases, modules can also be used in HTTP paths when data from datasources is needed to analyze URLs.
 
-## How it works
 
-In our case, module instances are stored in IoC container and this container is accessible from our app instance. This container is injected into application in app bootstrap and is accessible in every part of code via call:
+### Simple module schema
+
+- [**application services**](services.md#application-services) - module uses application services for some bussiness logic, it is a provider of bussines logic and application logic 
+- [**IO services**](services.md#io-services) - are called from application services for CRUD operations on datasources, so it is a data provider
+- **models factory** - provides models creating functionality, so it is a model provider
+- [**models**](models.md) - data representation classes
+
+> We can very simply say: module uses application services for some functionality. In application services is implemented bussines logic, ACL, input models validation, ... and anything else that is not dependent on a particular data source. The application service uses IO service(s) to read and write data. IO services use middleware for specific CRUD operations and make conversions between data sources and application models. These models will be built through module factory.
+
+### Differences between module and middleware
+
+The module can use middleware, but modules can not be used in middleware. Module contains logic for specific models, but middleware provides universal functionality (in most cases, this is a query for some CRUD operations). Middleware is not based on any models and provides universal access. Middleware can be used as a strategy, but not a module.
+
+### What the module does not contain
+
+Everything that provides functionality for processing and handling requests, drivers, universal handlers, data renderers, ... it is part of the access methods or middleware. We want to write reusable code and applications independent of the access method and rendering, so modules and middleware must be strictly separate from this logic.
+
+### Requirements
+
+Module must implement interface [`ha\Internal\DefaultClass\Module\Module`](#module-interface) or must be extended from an abstract class `ha\Internal\DefaultClass\Module\ModuleDefaultAbstract`.
+
+
+### How it works
+
+When an application is initialized, a IoC container for the modules is created. Configuration for modules is then loaded from the configuration file. Modules are instantiated according to the configuration and the modules created are injected into the ready IoC container. The container is then locked and is read-only. Finally, the container is injected into the application and can be used in any part of the code by the following call:
 
 ```php
 $moduleContainer = main()->module;
 ```
-
-When IoC container is created, modules configuration is readed and by this configuration are initialized module instances. Instances have been injected now into prepared IoC container.
-
-Every module has unique name in this container. It works as nammed signgleton instance.
-
-Module instance is accessible in every part of code via call:
+Each module must have a unique name in the IoC container (name is case insensitive). According to this name we then approach the module as follows: 
 
 ```php
 // get module instance into $module when instance has name 'myModule'
@@ -42,72 +67,14 @@ $moduleConfiguration = main()->module->myModule->cfg(); // returns a configurati
 $result = main()->module->myModule->doSomething(); // we can define custom method(s) in our module, e.g. doSomething()
 ```
 
-Module class is *facade* to module service(s), module factory or to other special functionality.
 
-Module class implements `ha\Internal\DefaultClass\Module\Module` or extends `ha\Internal\DefaultClass\Module\ModuleDefaultAbstract`. Module class method are also useful for lazy services initializon (create service instance only when is required). 
-
-```php
-interface Module
-{
-
-    /**
-     * Module constructor.
-     *
-     * @param Configuration $configuration
-     */
-    public function __construct(Configuration $configuration);
-
-    /**
-     * Get value from internal configuration by key.
-     *
-     * @param string $key
-     *
-     * @return mixed
-     */
-    public function cfg(string $key);
-
-    /**
-     * Get instance name.
-     *
-     * @return string
-     */
-    public function name() : string;
-
-}
-```
-
-## Module parts by functionality
-
-- [Models](models.md): represents a records in some datasource
-- Models collections: array of models with extended functionality and type checking for children 
-- Factory: factory for creating models and models collections
-- [Services](services.md): application/bussines logic, IO logic (read, insert, delete and update data)
-
-## Why are modules required?
-
-Module flow in ha framework provides:
-
-- unified and standardized access to logic
-- logic separated from other logic (logic is exactly divided into modules)
-- large dependency injections in our classes are not required, module is accessible from all parts of code via 
-`main()->module->myModule`
-- lazy initialization of services
-- automatic initialization by configuration in app bootstrap
-- module makes public access only for concrete functionality (everything other is private outside module); this separates and encapsualtes large logic in module services and subservices from other app parts, so accessible are only required services
-
-
-## How to add module instance to app
-
-Modules are automatically initialized from configuration stored in config file. See next chapter *Module(s) configuration* for details. This code not works (IoC container is locked after initialization):
-
-```php
-main()->module->myMyModule = new MyModule(); // error, IoC container is locked!
-```
 
 ## Module(s) configuration
 
-Module(s) configuration is stored in config file in `$cfg['modules']` array. Every item is array, which has two items: *(string) className* and *(array) configuration*. Key `name` must be unique in configruartion, this defines unique name of instance in module IoC container. Framework automatically creates instances from this configuration and adds theirs to IoC module container in app bootstrap. IoC container is locked after this process and access to items is read only.
-So `name` key is always required in configuration, other keys are specific by module (in our example `sqlMiddlewareName`, `cacheTTL`) and they defines real configuration data.
+The configuration of the modules must be stored in the config file in the `$cfg['modules']` variable. Module Configuration is an array consisting of the module class name and an associative array of values that make up a particular configuration for a given class.
+
+This associative array must always have a defined key `name`, this string value specifying the name under which the module will be available in the IoC container. Other values are dependent on the module's needs and are optional (in our example `sqlMiddlewareName`, `cacheTTL`):
+
 
 ```php
 // schema:
@@ -145,12 +112,13 @@ $cfg['modules'] = [
 ];
 ```
 
-This example shows, how we can have separated logic for users, articles and languages.
+> This example shows how we can have a separate logic for users, articles, and languages (Each logic is a separate module).
 
 
-## How to create new module
+## How to create a new module
 
-Our class must implement interface `ha\Internal\DefaultClass\Module\Module` or must be extended from `ha\Internal\DefaultClass\Module\ModuleDefaultAbstract` (this abstract class has default implementation of module interface). Abstract is useful, when we can use normal functionality. If we need e.g. special initializon in constructor, we can implement an interface.
+Module must implement interface [`ha\Internal\DefaultClass\Module\Module`](#module-interface) or must be extended from an abstract class `ha\Internal\DefaultClass\Module\ModuleDefaultAbstract`. The abstract class contains a predefined logic that is sufficient for the vast majority of implementations. If we need a special implementation, we need to implement the interface (for example, if we need something special in the constructor).
+
 
 ```php
 class ArticleModule extends ModuleDefaultAbstract
@@ -158,7 +126,7 @@ class ArticleModule extends ModuleDefaultAbstract
 }
 ```
 
-Next we can add facade method for factory, which will create module models.
+Once the class is created, we create a factory and make it available in the module with the public method  `factory()`:
 
 ```php
 // create factory
@@ -182,7 +150,7 @@ class ArticleModuleFactory
     }
 }
 
-// create facade method for factory in module with lazy initialization
+// create factory getter in module with lazy initialization
 class ArticleModule extends ModuleDefaultAbstract
 {
 
@@ -197,12 +165,15 @@ class ArticleModule extends ModuleDefaultAbstract
     }
 
 }
+```
 
-// example call in external code:
+ The factory will be accessible from any part of the application as follows:
+
+```php
 $article = main()->module->article->factory()->createArticle(Article::ARTCILE_TYPE_BLOG);
 ```
 
-Now we can add facade method(s) for accessing to some service(s). Please see [services docs](services.md) for more details about services.
+Finally, add public methods to make the selected functionality available outside of the module (e.g. application [services](services.md) getters):
 
 ```php
 class ArticleModule extends ModuleDefaultAbstract
@@ -230,7 +201,7 @@ class ArticleModule extends ModuleDefaultAbstract
 $article = main()->module->article->articleService()->readArticleById(144587); // if service has method "readArticleById(int $id): Article"
 ```
 
-Now we can add facade method(s) to other functionality.
+And/or add some facades methods (optionaly):
 
 ```php
 class ArticleModule extends ModuleDefaultAbstract
@@ -252,4 +223,43 @@ class ArticleModule extends ModuleDefaultAbstract
 $article = main()->module->article->invalidateCache(); // clear all data cached in module services
 ```
 
-As we can see, internal complex logic is invisible from outside. Implementation details are independent outside module.
+As we can see, the functionality is nicely encapsulated. Everything else is hidden inside the module, and internal logic is so completely separate from the outside world.
+
+
+
+Module methods can be beautifully used to initialize the called instances of the module only when we really need them, in this example e.g. `ArticleModule::factory()` and `ArticleModule::articleService()`. 
+
+
+
+## Module interface
+
+```php
+interface Module
+{
+
+    /**
+     * Module constructor.
+     *
+     * @param Configuration $configuration
+     */
+    public function __construct(Configuration $configuration);
+
+    /**
+     * Get value from internal configuration by key.
+     *
+     * @param string $key
+     *
+     * @return mixed
+     */
+    public function cfg(string $key);
+
+    /**
+     * Get instance name.
+     *
+     * @return string
+     */
+    public function name() : string;
+
+}
+```
+
