@@ -31,7 +31,9 @@ Collection must implement interface `ha\Internal\DefaultClass\Model\ModelCollect
 
 #### Converting collections to array
 
-We can use magic method `__invoke()`, which allows calling collection as function. It returns array with items as array or as stdClass. 
+We can use magic method `__invoke()`, which allows calling collection as function. It returns array with items as array or as stdClass. If you need sofisticated way, please use `foreach` models + some method on model.
+
+> Note: if some items (or items childs) uses as a property recursive relation to the same collection (or similary relation), problem can be in infinite loop.
 
 ```php
 // prepare collection
