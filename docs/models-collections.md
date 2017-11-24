@@ -352,7 +352,7 @@ Collection is used in many cases in services, when we converting data recieved f
 > We can use multiple binding variations (in context *A* we can bind only *X* and *Y*, in context *B* we can bind only *Y*, ...). This significantly speeds up app responses.
 > This principe also prevents problems with too many queries to datasources - e.g. single call to datasource and not multiple calls in foreach loops. In complex loading, if collection has items with subcollections with some other subcollections in deep tree, bind process could be optimized in top collection for better app performance. 
 
-**Idea:** collect all keys, load foreign models in single query and map foreign models to collection items by collected keys without direct dependency on datasources.
+**Idea:** collect all keys, load foreign models by these keys in single query and map foreign models to collection items by collected keys without direct dependency on datasources.
 
 This idea is very important for flexible and high performance applications. In a background, this is implementation of SOA principes. We use service for loading primary data and other independent service to loading childrens - and only with two calls (queries) - and concrete datasources are hidden in used services. So ORM in this case is based only on interfaces.
 
