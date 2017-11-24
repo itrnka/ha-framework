@@ -8,6 +8,8 @@ Collection in *ha* framework is native PHP array wrapped with extra usefull func
 - **access to native data**: every collection can be converted to native array or only some properties from items can be extracted (e.g. get only *id* property as array from items)
 - **data binding**: we can add extra methods - most often for data binding independent from datasource, but you can write some other custom logic for items
 
+> Note: Most important part of this document is [Data binding principe](#data-binding-principe-orm-based-on-real-objects), collections functionality is prepared for this universal principe.
+
 ### Collections in *ha* framework are divided to two main types:
 
 - [objects collections](#objects-collections) - collections of models which implements the same interface
@@ -346,9 +348,13 @@ Collection is used in many cases in services, when we converting data recieved f
 
 ## Data binding principe (ORM based on real objects)
 
-> This principe could be used in many cases and can be used as ORM like principe, which is independent from datasource. Therefore can be used name "ORM based on real objects" for this principe. Perfect is a fact, that this is also independent from relation types such as *1:n*, *n:m*, *1:1*, ... and therefore are not required methods such as *hasOne()*, *hasNamny()*, etc.
+> This principe could be used in many cases and can be used as ORM like principe, which is independent from datasource. Therefore can be used name "ORM based on real objects" for this principe. Perfect is a fact, that this is also independent from relation types such as *1:n*, *n:m*, *1:1*, ... and therefore are not required methods such as *hasOne()*, *hasMany()*, etc.
 > We can use multiple binding variations (in context *A* we can bind only *X* and *Y*, in context *B* we can bind only *Y*, ...). This significantly speeds up app responses.
-> This principe also prevents problems with too many queries to datasources - e.g. single call to datasource and not multiple calls in foreach loops. 
+> This principe also prevents problems with too many queries to datasources - e.g. single call to datasource and not multiple calls in foreach loops. In complex loading, if collection has items with subcollections with some other subcollections in deep tree, bind process could be optimized in top collection for better app performance. 
+
+**Idea:** collect all keys, load foreign models in single query and map foreign models to collection items by collected keys without direct dependency on datasources.
+
+This idea is very important for flexible and high performance applications. In a background, this is implementation of SOA principes. We use service for loading primary data and other independent service to loading childrens - and only with two calls (queries) - and concrete datasources are hidden in used services. So ORM in this case is based only on interfaces.
 
 #### Case study
 
