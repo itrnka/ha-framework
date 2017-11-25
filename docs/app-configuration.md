@@ -61,30 +61,30 @@ environment_name = 'console'
 Configuration file must begining with variable definition:
 
 ```php
-$cfg = []; // do not remove this line, $cfg variable is very important and required for bootstrap
+$cfg = []; 
 ```
 
 #### Part 1 - Application core	
 
-**App builder definition:** App is created in bootstrap via app builder. This builder creates single instance of our application and this instance is accessible from all parts of code via `$app = main();`. So builder class name must be defined in configuration for this functionality. This class must implementing interface `ha\App\App\AppBuilder`. We can also use default framework implementation `ha\App\App\AppBuilderDefault`. This is suitable for most cases, but we can use in special case also different implementation. We can simply change functionality of our app with our new implementation. This is unreal in most frameworks. So app builder is object, which builds and returns certain application instance with required interface implementation.
+**App builder definition:** Bootstrap creates an application instance by calling the builder who makes the app. A [default builder](../src/ha/App/Builder/AppBuilderDefault.php) is always sufficient, but we can also write our own (for very special cases). The builder must always implement an interface [`ha\App\App\AppBuilder`](../src/ha/App/Builder/AppBuilder.php). Configuration requires a class definition of this builder:
 
 ```php
 $cfg['app.builder.className'] = ha\App\App\AppBuilderDefault::class;
 ```
 
-**Environment name:** Store environment name recieved from bootstrap: bootstrap declares variable `$environmentName` and this variable is accessible in this scope. Is very usefull making this variable accessible from our app as our pseudo global variable.
+**Environment name:** You need to add the environment name that is received as `$environmentName `from the bootstrap process to the configuration:
 
 ```php
 $cfg['app.environmentName'] = $environmentName;
 ```
 
-**Unique app name:** Application must have unique name in our OS (or in cluster). This name is used e.g. in cache, when cache requires unique key for some variable. For example, in APC(u) we must have prefix for variables (when app1 and app2 uses variable 'x', this variable must be different for app1 and app2 and therefore must be prefixed with unique string). Without this variable are data not unique in some systems and not unique value for this variable can cause large problems accross our applications.
+**Unique app name:** In some processes, we need to know the unique name or hash of our application in order to recognize this application from other applications. This name can then also be used inside the application, such for cache keys prefix.
 
 ```php
-$cfg['app.uniqueName'] = md5(__DIR__); // please use concrete name
+$cfg['app.uniqueName'] = md5(__DIR__); // please use unique name or hash
 ```
 
-**Root directory path for project (project root):** Here is stored `public` and `php` directory. In our examples we use `{projectRoot}` string for this variable.
+**Root directory path for project (project root):** Here is stored `public` and `php` directory. In our examples, we use `{projectRoot}` string for this variable.
 
 ```php
 $cfg['app.rootDir'] = dirname(__DIR__);
@@ -98,13 +98,15 @@ $cfg['app.publicDirHTTP'] = $cfg['app.rootDir'] . '/public';
 
 #### Part 2 - Project files (prepare *PSR-4* autoloading)
 
-**Autoloading root path:** We must define, where are stored our project files for this current configuration. This directory is used as root for autoloading php files by *PSR-4* standard. This is very very useful, this can be e.g. used for special or new versions of our application code. When our project has e.g. 3 access methods with the same functionality (e.g. API, web page, mobile page) and we need add or modify some access method, we can clone files to another dir and set root for this case to this folder. So we can create next version of our app without changing other access methods and without changing existing files. This is perfect interface for multiple variations of our app. By default, value is `ver-1.0.0` and full path to this directory is `{projectRoot}/php/ver-1.0.0`. 
+**Autoloading root path:** We need to define where our project files are stored. This folder will use our application to load the classes by [*PSR-4*](https://en.wikipedia.org/wiki/PHP_Standard_Recommendation) standard. By default, value is `ver-1.0.0` and full path to this directory is `{projectRoot}/php/ver-1.0.0`. 
+
+> This allows us to use our project files in different versions for different environments. For example, we can easily test a new version of our app simply by changing the environment name, or we can create a new version of the files for some environment without affecting other parts of the app and other access methods. When an app is available through 3 different access methods (e.g. API, website, mobile site), and if we need to modify or add another method without changing the code in existing methods, this is a perfect way to do this. So we can simply create new app version and older versions will be unchanged. So API and website can work without changes, and the mobile site can be modified to have the files stored in another folder (as a new app version).
 
 ```php
 $cfg['app.class.version'] = 'ver-1.0.0';
 ```
 
-**Supported namespaces:** When we have defined root directory for classes autoloading, we must also define supported namespaces stored in this directory. But we only defines root names of this namespaces. For example, when we have classes `MyProject\Module\MySomeModule\MySomeModule`, `MyProject\Module\MySomeModule\Models\MyModel1`, ..., namespace root is `MyProject`. Its highly recommend using custom namespace for every access method. It will make access method totaly independent from other code and will be simply removed from your application in future.
+**Supported namespaces:** In order for automatic loading to work properly, we need to define which namespaces are stored in this folder. But we only define the root names of these namespaces. For example, when we have classes `MyProject\Module\MySomeModule\MySomeModule`, `MyProject\Module\MySomeModule\Models\MyModel1`, ..., namespace root is `MyProject`. Its highly recommend using custom namespace for every access method. Access method will be completely independent of the other code and will be removed from your application in the future.
 
 ```php
 $cfg['app.class.namespaceRoots'] = ['MyProject', 'MyMiddleware', 'WebAccess', 'ConsoleAccess'];
