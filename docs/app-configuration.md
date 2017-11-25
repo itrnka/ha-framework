@@ -83,11 +83,11 @@ $cfg['app.class.namespaceRoots'] = ['MyProject', 'MyMiddleware', 'WebAccess', 'C
 
 #### Part 3 - Middleware configuration
 
-See [middleware docs](middleware.md).
+See [middleware docs](middleware.md#middleware-configuration).
 
 #### Part 4 - Modules configuration
 
-See [modules docs](modules.md).
+See [modules docs](modules.md#modules-configuration).
 
 #### Part 5A - Routing configuration - only for HTTP access
 
