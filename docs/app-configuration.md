@@ -7,7 +7,7 @@ The application based on the *ha* framework works in such a way that everything 
 Configuration in *ha* framework is not just a connection setup. We specify that what application implementation will be used, what modules will be available, what middleware will be available, and our configuration may also contain some values that we can use in the application as pseudo-global variables. We also define what version of our classes will be used and which router implementation is used to process requests.
 
 ### Path to configuration files
-All configuration files are stored in folder `{projectRoot}/php/conf`. The files are not in *ini *format, but they are php files because we can use here constants (e.g. `__DIR__`), anonymous functions, and so on.
+All configuration files are stored in folder `{projectRoot}/php/conf`. The files are not in *ini* format, but they are php files because we can use here constants (e.g. `__DIR__`), anonymous functions, and so on.
 
 #### File name 
 
