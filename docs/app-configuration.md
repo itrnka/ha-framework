@@ -1,27 +1,59 @@
 # App configuration
 
-**Idea of ha framewrok is: everything, what we need to use, is defined in configuration.**
+The application based on the *ha* framework works in such a way that everything we need for a given application can be configured through a configuration file. Our application can be used in many different cases and our code can work in various variations and combinations. Specific behavior is defined in a particular configuration, and this configuration is typically stored in a single configuration file. This configuration resolves to one environment. It's not just a *devel*, *stage* or *production*. 
 
-### About configuration files
-Our configuration is stored in config files in folder `{projectRoot}/php/conf`. Configuration files are not `*.ini` files, but native `*.php` files. Why? In php can be defined closure functions, we can use constants as e.g. `__DIR__`, etc. 
+> We can have a lot of environments. One environment can be for a web page, the other can be for a mobile application, the third can be for an API, a fourth for a daemon, etc. And each of these configurations can have its *devel*, *stage* and *production* subversion (each subversion in one separated configuration file).
 
-Our application can be used in many different cases (the same code can works in many variations and combinations). Concrete variation has concrete configuration file. What this means? In configuration file is defined:
-- which application implementation is loaded (AppBuilder class name)
-- which middleware is loaded (list of configrations for concrete middleware instances)
-- which modules are loaded (list of configrations for concrete module instances)
-- which folder is used for our project files (project files version)
-- which router implementation is loaded for handling requests (only HTTP access; RouterBuilder class name is defined)
-- which commands are available from console (only shell access)
-- project specific variables (pseudo global variables)
-- etc.
+Configuration in *ha* framework is not just a connection setup. We specify that what application implementation will be used, what modules will be available, what middleware will be available, and our configuration may also contain some values that we can use in the application as pseudo-global variables. We also define what version of our classes will be used and which router implementation is used to process requests.
 
-Concrete configuration file is based on some single environment variable. This variable defines concrete environment name. This name determines, which configuration file is loaded. We can also use custom logic for environment name detection, framework is open for this functionality. Environment variable can be defined in `.htaccess` file (or we can also use anything other, e.g. host name). This logic is defined in initialization file `{projectRoot}/public/index.php` (this file will handle entire application and other php files in public folder are useless and potentialy unsafe). `{projectRoot}/public/index.php` is a bootstrap for HTTP access to application.
+### Path to configuration files
+All configuration files are stored in folder `{projectRoot}/php/conf`. The files are not in *ini *format, but they are php files because we can use here constants (e.g. `__DIR__`), anonymous functions, and so on.
 
-App bootstrap detects environment name, then loads configuration file by this name and initializes everything by this configuration.
+#### File name 
 
-### Configuration file location
+Once we know the name of our environment, the path to the configuration file will be as follows: 
+`{projectRoot}/php/conf/{environmentName}.conf.php`. This file is loaded in app bootstrap, when detected environment name is `{environmentName}`.
 
-When we have our environment name, configuration file path for this environment is `{projectRoot}/php/conf/{environmentName}.conf.php`.
+#### Important notes for environment name
+
+Each configuration defines the behavior of the application in a particular environment, so we need to name the environment. The best way is to use a specific environment variable that will specify the name of the configuration file. Using the environment variable is useful because we can define such a variable, for example, in the docker container, and let the app know how to behave. Environment variable can be set, for example, also in *.htaccess* file by host or by something else. We can also use a constant or some other mechanism, but then we lose the huge flexibility of the configurability.
+
+#### Environment name detection in HTTP appplication
+
+When we run our application over an HTTP server (*apache*, *nginx*, ...), our bootstrap file is `{projectRoot}/public/index.php`. To modify the environment name detection logic, find and edit the following lines in this file:
+
+```php
+// detect environment name or use default
+$environmentName = getenv('HA_APP_ENV');
+if (!is_string($environmentName) || empty($env)) {
+    $environmentName = 'web';
+}
+```
+Example of environment name as a constant in *.htaccess* file:
+
+```
+<IfModule mod_env.c>
+    SetEnv HA_APP_ENV web
+</IfModule>
+```
+Example of environment name detection by host in *.htaccess* file:
+
+```
+<IfModule mod_setenvif.c>
+    SetEnvIfNoCase Host ^(.*)$ HA_APP_ENV=no-web-host # default envName
+    SetEnvIf Host www.example-1.com HA_APP_ENV=example-1 # envName for host1
+    SetEnvIf Host www.example-2.com HA_APP_ENV=example-2 # envName for host2
+    SetEnvIf Host www.example-n.com HA_APP_ENV=example-n # envName for hostN
+</IfModule>
+```
+
+#### Environment name detection in console appplication
+
+When we run our application over shell command by calling `{projectRoot}/bin/ha`, the environment name is extracted from ini file `{projectRoot}/bin/ha.ini`. To modify the environment name, find and edit the following line in this file:
+
+```
+environment_name = 'console'
+```
 
 
 ### Configuration file structure
