@@ -174,7 +174,7 @@ Note: If we need full access to driver (our middleware is only proxy), `driver()
 
 ## How to make pseudo singleton from middleware class
 
-Middleware instances are by default not singletons, only container can not have more instances with the same name. Real singleton functionality provides trait `ha\Middleware\MiddlewareSingletonTrait`, so we need use this trait in class and constructor must call method `$this->denyMultipleInstances()`. Constructor is required for framework functionality, so we could not use protected constructor. Magic singleton methods are not supported yet (`__sleep()`, `__wake_up()`). This functionality only refuses multiple constructor calls of the same class in the system.
+Middleware instances are by default not singletons, only container can not have more instances with the same name. Real singleton functionality provides trait `ha\Middleware\MiddlewareSingletonTrait`, so we need to use this trait in class and the constructor must call method `$this->denyMultipleInstances()`. The constructor is needed for the functionality of *ha* framework, so we can not use a protected constructor. Magic singleton methods are not supported yet (`__sleep()`, `__wake_up()`). This functionality only refuses multiple constructor calls of the same class in our application.
 
 ```php
 // example
