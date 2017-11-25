@@ -71,7 +71,7 @@ $result = main()->module->myModule->doSomething(); // we can define custom metho
 
 ## Module(s) configuration
 
-The configuration of the modules must be stored in the config file in the `$cfg['modules']` variable. Module Configuration is an array consisting of the module class name and an associative array of values that make up a particular configuration for a given class.
+The configuration of the modules must be stored in the config file in the `$cfg['modules']` variable. This variable must be an array of particular configurations. Module Configuration is an array consisting of the module class name and an associative array of values that make up a particular configuration for a given class.
 
 This associative array must always have a defined key `name`, this string value specifying the name under which the module will be available in the IoC container. Other values are dependent on the module's needs and are optional (in our example `sqlMiddlewareName`, `cacheTTL`):
 

@@ -2,48 +2,50 @@
 
 ## What is middleware in *ha* framework
 
-Middleware is everything, what provides access to system and external resources (databases, cache systems, external API, other applications, ...). Middleware works as glue between our application and other systems or applications. Middleware class in *ha* framework is class, which provides access to external functionality via methods writted by *proxy* or *facade* design pattern (only simple wrapper). 
+Midddleware is anything that allows you to access operating system functionality, external resources (DB, cache, files, external API, logging layer, ...), vendor packages, or what provides some universal functionality (such as template renderer). Middleware acts as a glue between the application and such external functionality.
 
-Middleware in general is some service in SOA architecture and is independent from application bussines logic. It provides some univerzal functionality based on some system, e.g. provides CRUD operations for concrete datasource, provides templates rendering, ... So middleware does something with data without dependency on these data.
+The middleware implementation is designed to either wrap a driver or has façade methods taught to access external functionality. What is important is that the middleware functionality is not directly dependent on the contextual models from the application logic. And it is also independent of application logic. Middleware solves only access to something or something transforms and so on.
+
+Middleware in general is some service in SOA (service oriented architecture), respectively provides access to such service. Middleware does something with data without dependence on this data.
+
+> Please also read the [modules documentation](modules.md) to understand exactly what is the module and what is the middleware.
+
 
 **Middleware examples in general:**
+
 - database driver
 - image resampler
 - file storage driver
-- template driver (system for rendering templates)
+- template renderer (system for rendering templates)
 
-**Middleware examples:**
+**Specific middleware examples:**
+
 - MySQL driver
 - PDO driver
 - elasticsearch API
 - Twig template engine
 - cache driver (Memcached, Redis, ...)
 - AWS S3 PHP API
-
-## What is not middleware
-
-All functionality, which contains: bussines logic, concrete implemntations of application services, concrete IO services, models, controllers, ...
-
-We can use only drivers (and packages/classes similary to driver) as a middleware. When service works with concrete data (save products, delete categories), this service is not middleware. But this service is a middleware, when works with universal functionality (insert some row, delete some row). Please see [modules docs](modules.md) for better understanding.
+- Log4PHP
 
 
+
+### Requirements
+
+Middleware class must implement interface [`ha\Middleware\Middleware`](#middleware-interface) or must be extended from an abstract class `ha\Middleware\MiddlewareDefaultAbstract`.
 ## How it works
 
-In our case, middleware instances are stored in IoC container and this container is accessible from our app instance. This container is injected into application in app bootstrap and is accessible in every part of code by calling:
+When an application is initialized, a IoC container for middleware instances is created. Configuration for middleware is then loaded from the configuration file. Middleware instances are instantiated according to the configuration and the middleware instances created are injected into the ready IoC container. The container is then locked and is read-only. Finally, the container is injected into the application and can be used in any part of the code by the following call:
 
 ```php
 $middlewareContainer = main()->middleware;
 ```
 
-When IoC container is created, middleware configuration is readed and middleware instances are initialized by this configuration. Instances then are injected into prepared IoC container.
-
-Every middleware has unique name in this container. This principe works like as singleton. Other instance with this name can not be injected into IoC container and middleware container is unique in our app. Middleware instances can be also instances of the same type but with different configuration (e.g. MySQL instances with different connections) and every configuration has unique name. So this works as pseudo singleton, but checked is name in container and not instance type. Middleware instances outside IoC container are wrong.
-
-Middleware instance is accessible in every part of code by calling:
+Each middleware instance must have a unique name in the IoC container (name is case insensitive). Thus, we can create named instances of the same class but with a different configuration (for example, two MySQL connections). According to this name we then call specific middleware as follows:
 
 ```php
 // get middleware instance into $driver when instance has name 'mysql'
-$driver = main()->middleware->mysql;
+$driver = main()->middleware->mysql;. 
 
 // other examples by middleware interface:
 $driverName = main()->middleware->mysql->name(); // returns unique name in IoC container
@@ -53,58 +55,13 @@ $driverConfiguration = main()->middleware->mysql->cfg(); // returns a configurat
 $result = main()->middleware->mysql->doSomething(); // we can define custom method(s) in our middleware, e.g. doSomething()
 ```
 
-We can wrap to middleware some drivers, vendor packages or other classes. We do it by *proxy* or *facade* design pattern. Our class must only implementing `ha\Middleware\Middleware` or must be extended from `ha\Middleware\MiddlewareDefaultAbstract`. We can use also lazy initializon principe for initializing drivers or other classes (create instance and e.g. connect to DB only on first call). 
-
-```php
-interface Middleware
-{
-
-    /**
-     * Module constructor.
-     *
-     * @param Configuration $configuration
-     */
-    public function __construct(Configuration $configuration);
-
-    /**
-     * Get value from internal configuration by key.
-     *
-     * @param string $key
-     *
-     * @return mixed
-     */
-    public function cfg(string $key);
-
-    /**
-     * Get instance name.
-     *
-     * @return string
-     */
-    public function name() : string;
-
-}
-```
-
-## Why is middleware required?
-
-Middleware flow in ha framework provides:
-- app provides central and unified access to middleware instances (deep dependency injection is not required), middleware is accessible from all parts of code via `main()->middleware->myMiddleware`
-- automatic initialization by configuration in app bootstrap
-- lazy initialization for many drivers
-- lazy connections to databases or datasources
-
-## How to add middleware instance to app
-
-Middleware is automatically initialized from configuration stored in config file. See next chapter *Middleware configuration* for details. This code not works (IoC container is locked after initialization):
-
-```php
-main()->middleware->myMiddleware = new MyMiddleware(); // error, IoC container is locked!
-```
 
 ## Middleware configuration
 
-Middleware configuration is stored in config file in `$cfg['middleware']` array. Every item is array, which has two items: *(string) className* and *(array) configuration*. Key `name` must be unique in configruartion, this defines unique name of instance in middleware IoC container. Framework automatically creates instances from this configuration and adds theirs to IoC middleware container in app bootstrap. IoC container is locked after this process and access to items is read only.
-So `name` key is always required in configuration, other keys are specific by middleware (in our example `host`, `user`, `password`, ...) and they defines real configuration data.
+The configuration of middleware instances must be stored in the config file in the `$cfg['middleware']` variable. This variable must be an array of particular configurations. Particular configuration is an array consisting of the midddleware class name and an associative array of values that make up a particular configuration for a given class.
+
+This associative array must always have a defined key `name`, this string value specifying the name under which the middleware will be available in the IoC container. Other values are dependent on the middleware's needs and are optional (in our example `host`, `user`, `password`, ...):
+
 
 ```php
 // schema:
@@ -153,20 +110,19 @@ $cfg['middleware'] = [
 ];
 ```
 
-This example shows, how we can have multiple instances of the same class, which are defined as singleton like instances (instance name defines the singleton).
+The example shows how we can create two instances of the same middleware with a completely different configuration (`MySQLi::class`).
 
 
 ## How to create new middleware
 
-Our class must implements `ha\Middleware\Middleware` or must be extended from `ha\Middleware\MiddlewareDefaultAbstract` (this abstract class has default implementation of middleware interface). Abstract is useful, when we can use normal functionality. If we need e.g. special initializon in constructor, we can implement an interface.
-
+Middleware class must implement interface [`ha\Middleware\Middleware`](#middleware-interface) or must be extended from an abstract class `ha\Middleware\MiddlewareDefaultAbstract`. The abstract class contains a predefined logic that is sufficient for the vast majority of implementations. If we need a special implementation, we need to implement the interface (for example, if we need something special in the constructor).
 
 ```php
 class MyMiddleware extends MiddlewareDefaultAbstract
 {
 }
 ```
-Next we can add lazy initialization of driver or some class instance.
+We will add lazy initialization of the driver or some class instance (it might be a class from vendor package):
 
 ```php
 class MyMiddleware extends MiddlewareDefaultAbstract
@@ -185,7 +141,8 @@ class MyMiddleware extends MiddlewareDefaultAbstract
 
 }
 ```
-Now we can add facade method for accessing some functionality.
+
+Finally, add public methods to make the selected functionality available outside of the midddleware:
 
 ```php
 class MyMiddleware extends MiddlewareDefaultAbstract
@@ -204,7 +161,7 @@ class MyMiddleware extends MiddlewareDefaultAbstract
 
     public function doSomething(int $someArgument): SomeReturnValue
     {
-	return $this->driver()->executeSomething($someArgument);
+        return $this->driver()->executeSomething($someArgument);
     }
 }
 
@@ -232,5 +189,39 @@ class MyMiddleware extends MiddlewareDefaultAbstract
     }
     
     // ...
+}
+```
+
+
+
+## Middleware interface
+
+```php
+interface Middleware
+{
+
+    /**
+     * Module constructor.
+     *
+     * @param Configuration $configuration
+     */
+    public function __construct(Configuration $configuration);
+
+    /**
+     * Get value from internal configuration by key.
+     *
+     * @param string $key
+     *
+     * @return mixed
+     */
+    public function cfg(string $key);
+
+    /**
+     * Get instance name.
+     *
+     * @return string
+     */
+    public function name() : string;
+
 }
 ```
