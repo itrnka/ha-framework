@@ -201,7 +201,7 @@ interface Middleware
 {
 
     /**
-     * Module constructor.
+     * Middleware constructor.
      *
      * @param Configuration $configuration
      */
