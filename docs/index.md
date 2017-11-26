@@ -12,6 +12,8 @@
    * [Models](models.md)
    * [Models collections](models-collections.md)
 5. [Application configuration](app-configuration.md)
+6. [HTTP application](http-routing.md)
+7. [Console application](shell.md)
 
 ## Official packages
 
