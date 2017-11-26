@@ -31,5 +31,4 @@ Framework can be installed via [ha project skeleton](https://github.com/itrnka/h
 - functionality versioning (the same project can work with versioned classes by environment)
 - everything can be configured in config files and application is builded from config file (it works similarly as *docker-compose.yml*)
 - simulated string[], int[], float[], bool[] collections for better array type checking in PHP
-- this is not wrong Symfony wrapper such as laravel
 
