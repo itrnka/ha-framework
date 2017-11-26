@@ -1,6 +1,6 @@
 ![ha framework](img/ha-logo.png "ha framework")
 
-# HTTP routing in *ha* framework
+# HTTP application and routing in *ha* framework
 
 
 When our application runs an HTTP server, such as an Apache HTTP server, nginx, etc., our job is to process the HTTP request, convert it to an HTTP response, and send this response to the client.  In order to process the request, we need to go through the list of URLs supported in our application. We also need to verify whether client requirements match our capabilities. If something is wrong, we need to transform error(s) to adequate HTTP response. If the URL and everything else is correct, we run a process that produces or processes the data (by current URL) and transforms the result of the process into an HTTP response. 
