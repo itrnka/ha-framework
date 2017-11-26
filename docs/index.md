@@ -6,7 +6,7 @@
 2. Application structure
 3. [Middleware](modules.md)
 4. [Modules](modules.md)
-
-⋅⋅1. Ordered sub-list
-
+   * [Services](services.md)
+   * [Models](models.md)
+   * [Models collections](models-collections.md)
 5. [Application configuration](app-configuration.md)
