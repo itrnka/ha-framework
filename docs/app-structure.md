@@ -14,7 +14,7 @@ Framework core is very simple and very effective glue between some application p
   - [HTTP access](docs/http-routing.md): recieve and convert HTTP requests to HTTP responses (router, routes, controllers, request, response, rendering)
   - [Shell access](docs/shell.md): executing scripts from command line
  
-Application functionality is based on [configuration](app-configuration.md) in *ha* framework, please read, how can be application [configured](docs/app-configuration.md). For a better understanding, read also the [introduction](introduction.md).
+Application functionality is based on [configuration](app-configuration.md) in *ha* framework, please read, how can be application [configured](app-configuration.md). For a better understanding, read also the [introduction](introduction.md).
 
 ## Simple schema
 
