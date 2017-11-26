@@ -1,6 +1,8 @@
-# Middleware
+![ha framework](docs/img/ha-logo.png "ha framework")
 
-## What is middleware in *ha* framework
+# Middleware in *ha* framework
+
+## What is middleware
 
 Midddleware is anything that allows you to access operating system functionality, external resources (DB, cache, files, external API, logging layer, ...), vendor packages, or what provides some universal functionality (such as template renderer). Middleware acts as a glue between the application and such external functionality.
 

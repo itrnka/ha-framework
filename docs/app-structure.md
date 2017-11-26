@@ -1,3 +1,5 @@
+![ha framework](docs/img/ha-logo.png "ha framework")
+
 # Application structure in *ha* framework
 
 Framework core is very simple and very effective glue between some application parts. These parts are divided into the following areas according to their functionality:

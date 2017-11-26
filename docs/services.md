@@ -1,4 +1,6 @@
-# Services
+![ha framework](docs/img/ha-logo.png "ha framework")
+
+# Services in *ha* framework
 
 Service in *ha* framework is extended from `ha\Internal\DefaultClass\Service\ModuleServiceDefaultAbstract` or service must implement interface `ha\Internal\DefaultClass\Service\ModuleService`. Service is instance, which provides some application/bussines logic or privdes IO operations (CRUD operations).
 

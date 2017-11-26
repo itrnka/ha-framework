@@ -1,4 +1,6 @@
-# Models collections
+![ha framework](docs/img/ha-logo.png "ha framework")
+
+# Models collections in *ha* framework
 
 Collection in *ha* framework is native PHP array wrapped with extra usefull functionality, which speeds code writing and code reusability. Collection also provides better data handling and data validation. This functionality is divided to:
 

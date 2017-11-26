@@ -1,4 +1,4 @@
-![ha framework](https://github.com/itrnka/ha-framework/blob/master/docs/img/ha-logo.png "ha framework")
+![ha framework](docs/img/ha-logo.png "ha framework")
 
 # *ha* framework
 

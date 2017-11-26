@@ -1,6 +1,8 @@
-# Modules
+![ha framework](docs/img/ha-logo.png "ha framework")
 
-## What is module in *ha* framework
+# Modules in *ha* framework
+
+## What is module
 
 Module is a encapsulated system that provides some complex functionality. So we can use name "logic provider" for this application component. Access to functions can be provided via facade methods, or if you do not want use facade access, module can working as IoC container with services and as a factory for models. Very important functionality of module is hidding of most functionality from public scope. Access can only be public for the necessary functionality and is, by default, completely independent of data sources. The public scope does not need to know what source was used for our activity. We just want to read, write, delete or update some data and the way to do it is irrelevant outside the module.
 

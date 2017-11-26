@@ -1,3 +1,5 @@
+![ha framework](docs/img/ha-logo.png "ha framework")
+
 # Introduction
 
 *ha* framework  was created to allow applications that are fast and flexible to be written. The development of this framework lasted several years. Some principles have been used that have been good in other frameworks. Bad implementations were, of course, omitted. 

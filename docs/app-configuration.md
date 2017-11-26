@@ -1,4 +1,6 @@
-# App configuration
+![ha framework](docs/img/ha-logo.png "ha framework")
+
+# Application configuration in *ha* framework
 
 The application based on the *ha* framework works in such a way that everything we need for a given application can be configured through a configuration file. Our application can be used in many different cases and our code can work in various variations and combinations. Specific behavior is defined in a particular configuration, and this configuration is typically stored in a single configuration file. This configuration resolves to one environment. It's not just a *devel*, *stage* or *production*. 
 

@@ -1,3 +1,5 @@
+![ha framework](docs/img/ha-logo.png "ha framework")
+
 # Models in *ha* framework
 
 Model in ha framework is simple class, which holds only raw data. This is very important for many cases, when we create very complex and large models from multiple datasources. Primary object can be loaded from RDBMS database (such as MySQL) and children can be loaded e.g. from cache. Result in one complex model, which in application logic is single object.

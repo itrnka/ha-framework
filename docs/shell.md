@@ -1,3 +1,5 @@
+![ha framework](docs/img/ha-logo.png "ha framework")
+
 # *ha* console application
 
 Console application is an application runned from command line. This application can be runned from your project directory ([ha project skeleton](https://github.com/itrnka/ha-project-skeleton/blob/master/README.md) installation is required). Our application is based on *Symphony Console Component* and ha framework provides simple access to this functionality. You can write custom commands with some custom functionality.

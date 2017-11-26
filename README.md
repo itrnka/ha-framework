@@ -1,4 +1,4 @@
-![ha framework](https://github.com/itrnka/ha-framework/blob/master/docs/img/ha-logo.png "ha framework")
+![ha framework](docs/img/ha-logo.png "ha framework")
 
 *ha* framework is PHP 7.1 framework for professionals with strict typing. It is a truly flexible framework without ballast and is based on interfaces and some predefined instances that can be changed at any time. This framework is a vendor package installable via composer with a small default required functionality that sticks together any components to meet service-oriented architecture requirements at the code level. And you can easly add to this concept everything, what you need - custom packages, custom ORM, custom drivers...
 
