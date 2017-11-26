@@ -1,4 +1,4 @@
-![ha framework](docs/img/ha-logo.png "ha framework")
+![ha framework](img/ha-logo.png "ha framework")
 
 # Models collections in *ha* framework
 

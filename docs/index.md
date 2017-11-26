@@ -1,6 +1,6 @@
-![ha framework](docs/img/ha-logo.png "ha framework")
+![ha framework](img/ha-logo.png "ha framework")
 
-# *ha* framework
+# *ha* framework documentation
 
 ## Table of contents
 

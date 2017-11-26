@@ -1,8 +1,8 @@
-![ha framework](docs/img/ha-logo.png "ha framework")
+![ha framework](img/ha-logo.png "ha framework")
 
-# *ha* console application
+# Console application in *ha* framework
 
-Console application is an application runned from command line. This application can be runned from your project directory ([ha project skeleton](https://github.com/itrnka/ha-project-skeleton/blob/master/README.md) installation is required). Our application is based on *Symphony Console Component* and ha framework provides simple access to this functionality. You can write custom commands with some custom functionality.
+Console application is an application runned from the command line. This application can be runned from your project directory ([ha project skeleton](https://github.com/itrnka/ha-project-skeleton/blob/master/README.md) installation is required). Our application is based on *Symphony Console Component* and ha framework provides simple access to this functionality. You can write custom commands with some custom functionality.
 
 For more informations about *Symphony Console Component* please see [official documentation](https://symfony.com/doc/current/components/console.html).
 
