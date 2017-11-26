@@ -3,4 +3,8 @@
 # *ha* framework documentation
 
 1. [Introduction](introduction.md)
-2. XXX
+2. Application structure
+3. [Middleware](modules.md)
+4. [Modules](modules.md)
+⋅⋅4. Ordered sub-list
+5. [Application configuration](app-configuration.md)
