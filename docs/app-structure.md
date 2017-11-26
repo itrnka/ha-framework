@@ -20,7 +20,7 @@ Application functionality is based on [configuration](app-configuration.md) in *
 
 As we can see, the app is beautifully divided into separate sections. The yellow box is an application logic, which is composed of some modules. The blue box provides access to external resources that are completely separate from application logic. The application is complemented by green boxes that provide access to the application logic and are in relation *n:1* to our application logic. Later, if our application logic will have some versions, this relationship will be *n:m*. *Access method* = *router* + *routes* + *controllers* for specific case (case = website, mobile site, API, website on host1, website on host2, etc.).
 
-Access to modules and middleware is based on *inversion of control* principle, so these instances are accessible by the following call in any part of the code:
+Access to modules and middleware is based on *inversion of control*, so these instances are accessible by the following call in any part of the code:
 
 ```php
 // application instance
