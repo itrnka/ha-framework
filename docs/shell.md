@@ -2,9 +2,9 @@
 
 # Console application in *ha* framework
 
-Console application is an application runned from the command line. This application can be runned from your project directory ([ha project skeleton](https://github.com/itrnka/ha-project-skeleton/blob/master/README.md) installation is required). Our application is based on *Symphony Console Component* and ha framework provides simple access to this functionality. You can write custom commands with some custom functionality.
+Console application is an application runned from the command line. This application can be runned from your project directory ([ha project skeleton](https://github.com/itrnka/ha-project-skeleton/blob/master/README.md) installation is required). Our application is based on *Symfony Console Component* and ha framework provides simple access to this functionality. You can write custom commands with some custom functionality.
 
-For more informations about *Symphony Console Component* please see [official documentation](https://symfony.com/doc/current/components/console.html).
+For more informations about *Symfony Console Component* please see [official documentation](https://symfony.com/doc/current/components/console.html).
 
 Command in our case is class instance, which functionality is very similary to route and also controller. So console application works as router, but we have shell arguments instead of HTTP request and URL. So we can use our commands likewise as controllers.
 
