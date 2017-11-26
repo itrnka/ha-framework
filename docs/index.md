@@ -19,7 +19,7 @@
 
 ### Project skeleton
 
-- [basic skelecton](https://github.com/itrnka/ha-project-skeleton) - skeleton for PHP project without frontend enhancements
+- [Basic skeleton](https://github.com/itrnka/ha-project-skeleton) - skeleton for PHP project without frontend enhancements
 
 ### Middleware
 
