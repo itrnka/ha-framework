@@ -125,17 +125,36 @@ See [middleware docs](middleware.md#middleware-configuration).
 
 See [modules docs](modules.md#modules-configuration).
 
-#### Part 5A - Routing configuration - only for HTTP access
+#### Part 5 (A) - Routing configuration - only for HTTP access
 
-(Todo).
+The http-based application needs a router builder to create a router and routes. These instances are then used when processing the request. Router builder must always implement an interface [`ha\Access\HTTP\Router\Builder\HTTPRouterBuilder`](../src/ha/Access/HTTP/Router/Builder/HTTPRouterBuilder.php). Configuration requires a class definition of this builder:
 
-#### Part 5B - Commands configuration - only for shell access (console)
+```php
+$cfg['web.router.builder'] = ha\Access\HTTP\Router\Builder\HTTPRouterBuilderExample::class; // example implementation
+```
+> In project skeleton is used only [example implementation](../src/ha/Access/HTTP/Router/Builder/HTTPRouterBuilderExample.php) and must be changed in real use.
 
-(Todo).
+#### Part 5 (B) - Commands configuration - only for shell access (console)
+
+For the console, it is necessary to define in particular the list of available commands (list of classes based on `Symfony\Component\Console\Command\Command`):
+
+```php
+// console app name
+$cfg['console.app.name'] = 'HA console application';
+
+// console app version
+$cfg['console.app.version'] = '1.0.0';
+
+// Add your commands here ($cfg['console.commands'] is list of commands classes)
+$cfg['console.commands'] = [
+    Examples\ConsoleAccess\HelloWorldCommand::class,
+];
+```
+
 
 #### Part 6 - Custom variables (pseudo global variables)
 
-Configuration defined in this file (full variable `$cfg`) is automatically available from our app instance in all parts of our code. When we have config variable `$cfg['my.some.configuration.variable']`, we can simple accessing this variable from wherever by calling `main()->cfg()->get('my.some.configuration.variable')`. So is very usefull store some specific data into configuration. This principe so allows defining our custom pseudo global variable by this example:
+Configuration defined in this file (full variable `$cfg`) is automatically available from our app instance in all parts of our code. When we have config variable `$cfg['my.some.configuration.variable']`, we can simple accessing this variable from wherever by calling `main()->cfg()->get('my.some.configuration.variable')`. So it's very useful to put some specific data into our configuration. This principe so allows defining our custom pseudo global variable by this example:
 
 ```php
 $cfg['my.some.key1'] = 123;
@@ -255,7 +274,15 @@ $cfg['modules'] = [
 // Access configuration (rounting/commands, based on access type)
 //-------------------------------------------------------------------------------------------------------------------------
 
-// TODO
+// For HTTP:
+$cfg['web.router.builder'] = ha\Access\HTTP\Router\Builder\HTTPRouterBuilderExample::class; // example implementation
+
+// For console:
+$cfg['console.app.name'] = 'HA console application'; // console app name
+$cfg['console.app.version'] = '1.0.0'; // console app version
+$cfg['console.commands'] = [ // Add your commands here ($cfg['console.commands'] is list of commands classes)
+    Examples\ConsoleAccess\HelloWorldCommand::class,
+];
 
 //-------------------------------------------------------------------------------------------------------------------------
 // Other (pseudo global variables)
@@ -270,7 +297,6 @@ $cfg['my.server.timezone'] = function(): DateTimeZone {
 };
 ```
 
-
 #### Best practices for configuration files
 
-We can have shared configuration file (e.g. `{projectRoot}/conf/_shared.php`) and this file can be included into concrete configuration file. Concrete configuration then only appends or overrides some specific data. This extends our base configuration in this case with specific configuration data.
+We can have shared configuration file (e.g. `{projectRoot}/conf/_shared.php`) and this file can be included into our configuration file. We then only write specific values in the configuration file. This extends our base configuration in this case with specific configuration data.
