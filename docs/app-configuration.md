@@ -132,7 +132,7 @@ The http-based application needs a router builder to create a router and routes.
 ```php
 $cfg['web.router.builder'] = ha\Access\HTTP\Router\Builder\HTTPRouterBuilderExample::class; // example implementation
 ```
-> In project skeleton is used only [example implementation](../src/ha/Access/HTTP/Router/Builder/HTTPRouterBuilderExample.php) and must be changed in real use.
+> In project skeleton is used only [example implementation](../src/ha/Access/HTTP/Router/Builder/HTTPRouterBuilderExample.php) and must be changed in real use. Real implementation is required and can be written by this example.
 
 #### Part 5 (B) - Commands configuration - only for shell access (console)
 
