@@ -48,9 +48,9 @@ abstract class ModuleServiceDefaultAbstract implements ModuleService
 }
 ```
 
-**Service division by functionality and accessibility:**
+**Services by functionality and accessibility:**
 
-- application services
+- Application services
 - IO services
 
 
