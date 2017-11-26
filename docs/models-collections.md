@@ -293,7 +293,7 @@ Examples\Module\CarModule\Model\CarBrand\CarBrands (1) (
 
 #### How to determine, whether collection is empty
 
-Method `isEmpty()` provides this funtionality. If collection is empty, method return `true`, otherwise `false` is returned. 
+Method `isEmpty()` provides this funtionality. If collection is empty, method returns `true`, otherwise `false` is returned. 
 
 ```php
 $result = $carBrands->isEmpty();
