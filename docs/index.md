@@ -12,3 +12,20 @@
    * [Models](models.md)
    * [Models collections](models-collections.md)
 5. [Application configuration](app-configuration.md)
+
+## Official packages
+
+### Project skeleton
+
+- [basic skelecton](https://github.com/itrnka/ha-project-skeleton) - skeleton for PHP project without frontend enhancements
+
+### Middleware
+
+- [Twig templates](https://github.com/itrnka/ha-twig-renderer-middleware) - Twig template renderer middleware implementation for *ha* framework based on [Twig](https://twig.symfony.com/).
+- [APCu cache](https://github.com/itrnka/ha-apcu-middleware) - [APCu](http://php.net/manual/en/book.apcu.php) cache client middleware implementation for *ha* framework.
+- [MySQLi driver](https://github.com/itrnka/ha-mysqli-middleware) - MySQLi middleware implementation for *ha* framework. Provides access to MySQL databases. Query builder is also included.
+
+### HTTP access to application
+
+- [Smart HTTP Rest API](https://github.com/itrnka/SmartHTTPRestAPI) - Rest API handling for *ha* framework. Package includes routes and controllers by *ha* framework standards. Currently is supported only *JSON* body in requests and responses.
+
