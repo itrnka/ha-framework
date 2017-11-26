@@ -30,7 +30,7 @@ The access method is a specific environment, and every environment has just one 
 
 This definable application provides an incredible amount of options for the same code to work in different ways. The possibilities are multiplied by using a docker along with environment variables.
 
-See [Configuration docs](configuration.md) for more informations.
+See [Configuration docs](app-configuration.md) for more informations.
 
 
 ## Use anything
