@@ -100,7 +100,7 @@ $cfg['app.publicDirHTTP'] = $cfg['app.rootDir'] . '/public';
 
 #### Part 2 - Project files (prepare *PSR-4* autoloading)
 
-**Autoloading root path:** We need to define where our project files are stored. This folder will use our application to load the classes by [*PSR-4*](https://en.wikipedia.org/wiki/PHP_Standard_Recommendation) standard. By default, value is `ver-1.0.0` and full path to this directory is `{projectRoot}/php/ver-1.0.0`. 
+**Autoloading root path:** We need to define where our project files are stored. This folder will use our application to load the classes by [*PSR-4*](https://en.wikipedia.org/wiki/PHP_Standard_Recommendation) standard. By default, value is `ver-1.0.0` and full path to this directory is `{projectRoot}/php/ver-1.0.0`. See also [PSR-4 standard](http://www.php-fig.org/psr/psr-4/) for more informations.
 
 > This allows us to use our project files in different versions for different environments. For example, we can easily test a new version of our app simply by changing the environment name, or we can create a new version of the files for some environment without affecting other parts of the app and other access methods. When an app is available through 3 different access methods (e.g. API, website, mobile site), and if we need to modify or add another method without changing the code in existing methods, this is a perfect way to do this. So we can simply create new app version and older versions will be unchanged. So API and website can work without changes, and the mobile site can be modified to have the files stored in another folder (as a new app version).
 
