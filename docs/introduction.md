@@ -35,13 +35,13 @@ See [Configuration docs](configuration.md) for more informations.
 
 ## Use anything
 
-*ha* framework does not contain any unnecessary classes and allows developers to use all your favorite packages. Thus there are no unnecessary drivers, ORM, and other ballast. There are, of course, some common drivers, but their use is optional and can be easily installed via a compsoer. *ha* framework also provides an interface to allow any functionality to be used as a middleware. This allows you to use any packages or classes using a few lines of code.
+*ha* framework does not contain any unnecessary classes and allows developers to use all your favorite packages. Thus there are no unnecessary drivers, ORM, and other ballast. There are, of course, some common drivers, but their use is optional and can be easily installed via a composer. *ha* framework also provides an interface to allow any functionality to be used as a middleware. This allows you to use any packages or classes using a few lines of code.
 
 *ha* framework provides only an effective glue for application components and a well-written boostrap. The transition to this framework will then be able to preserve your existing code to a very large extent. Guaranteed is high reusability of your code and the separation of logical units into components that meet the elements of a service-oriented architecture.
 
 
 ## Change anything
 
-*ha* framework is strictly based on interfaces, and each implementation can easily be replaced by another implementation. There is always a default implementation that should meet the requirements of versatility of use. In practice, however, there are cases where we need a very special implementation. Here is a very big problem with normal frameworks, usually we come across a point where the framework functionality change is impossible.
+*ha* framework is strictly based on interfaces, and each implementation can easily be replaced by another implementation (and this implementation is defined in config file). There is always a default implementation that should meet the requirements of versatility of use. In practice, however, there are cases where we need a very special implementation. Here is a very big problem with normal frameworks, usually we come across a point where the framework functionality change is impossible.
 
 Framework developers usually do not allow the fact that another developer needs another implementation. *ha* framework is incomparably better in this dimension.
