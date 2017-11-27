@@ -26,6 +26,7 @@
 - [Twig templates](https://github.com/itrnka/ha-twig-renderer-middleware) - Twig template renderer middleware implementation for *ha* framework based on [Twig](https://twig.symfony.com/).
 - [APCu cache](https://github.com/itrnka/ha-apcu-middleware) - [APCu](http://php.net/manual/en/book.apcu.php) cache client middleware implementation for *ha* framework.
 - [MySQLi driver](https://github.com/itrnka/ha-mysqli-middleware) - MySQLi middleware implementation for *ha* framework. Provides access to MySQL databases. Query builder is also included.
+- [Elasticsearch friver](https://github.com/itrnka/ha-elasticsearch-middleware) - Elasticsearch client middleware implementation for ha framework based on official [elasticsearch PHP API](https://github.com/elastic/elasticsearch-php).
 
 ### HTTP access to application
 
