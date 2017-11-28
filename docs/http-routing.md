@@ -7,13 +7,14 @@ When our application runs an HTTP server, such as an Apache HTTP server, nginx, 
 
 This functionality can be achieved in several ways, but *ha* framework uses the following objects:
 
-- **Request** - is the object that represents the client request and is injected into each route.
-- **Response** -  is the object that represents the response of the server to the client request and is injected into each route.
-- **Router** - contains routes and, after running the application, takes care to find and validate the route for that request. If an error occurs, it calls the error handler.
-- **Route** - has a mechanism for checking whether the URL and headers are correct, and if so, it creates the appropriate controller instance and runs controller method to handle request. Route is injected into each controller as dependencies holder (request + response).
-- **Controller** - contains methods to handle the current request, transforms request data for some application service, calls this service with prepared data, and transforms the result into response.
-- **Error handler** - is an instance that generates a client response in the event of an error and is injected into the router.
-- **Authorization** - is an instance that is injected into the route, its job is to verify whether the authorization requirements are met at that URL.
-- **Router builder** - creates instances of the above mentioned objects for the current environment and returns the finished router to application bootstrap.
+- [**Request**](http-access/request.md) - is the object that represents the client request and is injected into each route.
+- [**Response**](http-access/response.md) -  is the object that represents the response of the server to the client request and is injected into each route.
+- [**Router**](http-access/route.md) - contains routes and, after running the application, takes care to find and validate the route for that request. If an error occurs, it calls the error handler.
+- [**Route**](http-access/router.md) - has a mechanism for checking whether the URL and headers are correct, and if so, it creates the appropriate controller instance and runs controller method to handle request. Route is injected into each controller as dependencies holder (request + response).
+- [**Controller**](http-access/controller.md) - contains methods to handle the current request, transforms request data for some application service, calls this service with prepared data, and transforms the result into response.
+- [**Error handler**](http-access/error-handler.md) - is an instance that generates a client response in the event of an error and is injected into the router.
+- [**Authorization**](http-access/authorization.md) - is an instance that is injected into the route, its job is to verify whether the authorization requirements are met at that URL.
+- [**Router builder**](http-access/router-builder.md) - creates instances of the above mentioned objects for the current environment and returns the finished router to application bootstrap.
+- [**HTTP Error**](http-access/errors.md) - special `\Error` implementation with HTTP status code and specific response headers.
 
 (TODO)
