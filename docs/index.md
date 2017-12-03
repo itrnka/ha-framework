@@ -21,6 +21,9 @@
 
 - [Basic skeleton](https://github.com/itrnka/ha-project-skeleton) - skeleton for PHP project without frontend enhancements
 
+- [Skeleton for static files](https://github.com/itrnka/ha-project-skeleton-assets) - extends basic skeleton, provides optimization, compilation and publishing of static files, such as CSS, JS, font and images by using [Grunt](https://gruntjs.com/) and [Bower](https://bower.io/).
+
+
 ### Middleware
 
 - [Twig templates](https://github.com/itrnka/ha-twig-renderer-middleware) - Twig template renderer middleware implementation for *ha* framework based on [Twig](https://twig.symfony.com/).
